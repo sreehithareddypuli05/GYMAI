@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-charcoal text-ink font-body antialiased;
+    background-image:
+      radial-gradient(60% 50% at 50% 0%, rgba(16, 185, 129, 0.08) 0%, rgba(11, 15, 13, 0) 70%);
+    background-repeat: no-repeat;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    background: rgba(16, 185, 129, 0.3);
+    color: #F5F7F6;
+  }
+
+  :focus-visible {
+    outline: 2px solid #10B981;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0B0F0D;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1B211D;
+    border-radius: 999px;
+    border: 2px solid #0B0F0D;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #232B26;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8;
+  }
+
+  .card-surface {
+    @apply bg-surface border border-surface-border rounded-2xl shadow-card;
+  }
+
+  .label-eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-emerald;
+  }
+
+  .data-figure {
+    @apply font-mono tabular-nums;
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #151A17 0%, #1E2521 50%, #151A17 100%);
+    background-size: 800px 100%;
+    @apply animate-shimmer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
