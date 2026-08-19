@@ -1,242 +1,104 @@
 # GymAI — Training Intelligence
 
-GymAI is a personalized fitness tracking and training platform designed to help users build consistent workout habits, track their progress, and receive workouts based on their fitness profile.
-
-The application combines a modern React frontend with a FastAPI backend to provide authentication, user profiles, personalized workout generation, workout tracking, dashboard analytics, history, progress insights, and account settings.
-
----
-
-## Features
-
-### Authentication
-
-GymAI provides a complete authentication system.
-
-- User registration
-- User login
-- JWT-based authentication
-- Persistent login using local storage
-- Protected API routes
-- Current user profile retrieval
-- Logout functionality
-- Password update support
-
----
-
-## User Profile
-
-Users can create and manage their fitness profile.
-
-The profile includes:
-
-- Full name
-- Email
-- Avatar
-- Fitness level
-- Fitness goal
-- Training frequency
-- Available equipment
-- Age
-- Height
-- Weight
-- Profile completion status
-
-The profile information is used to personalize the user's workout experience.
-
----
-
-## Personalized Workouts
-
-GymAI generates workouts based on the user's profile.
-
-Workout selection considers:
-
-- Fitness level
-- Training goal
-- Available equipment
-- Exercise difficulty
-- Target muscle groups
-
-Supported fitness levels:
-
-- Beginner
-- Intermediate
-- Advanced
-
-Supported goals:
-
-- Build Muscle
-- Gain Strength
-- Lose Fat
-- Improve Endurance
-- General Fitness
-
-If the user has not selected equipment, GymAI can fall back to bodyweight exercises.
-
-Each personalized workout includes:
-
-- Workout name
-- Training focus
-- Difficulty
-- Estimated duration
-- Selected exercises
-
----
-
-## Workout Tracking
-
-Completed workouts are stored in the backend.
-
-Each workout session records:
-
-- Workout ID
-- Workout name
-- Training focus
-- Duration
-- Number of exercises
-- Completion date and time
-
-This real workout data powers the Dashboard, History, and Progress pages.
-
----
-
-## Dashboard
-
-The GymAI dashboard provides a quick overview of the user's training activity.
-
-Metrics include:
-
-- Current streak
-- Longest streak
-- Workouts completed this week
-- Total workouts
-- Training time this week
-- Weekly activity
-- Recent workouts
-
-The dashboard updates using real workout session data stored in the database.
-
----
-
-## Workout History
-
-The History page displays completed workouts in chronological order.
-
-Users can view:
-
-- Workout name
-- Completion date
-- Workout duration
-- Number of exercises
-- Workout completion information
-
-The data is fetched from the backend rather than using static mock data.
-
----
-
-## Progress Analytics
-
-The Progress page provides analytics based on completed workout sessions.
-
-Currently tracked metrics include:
-
-### Completion Rate
-
-Calculated based on:
-
-- User's training frequency
-- Number of completed workouts
-- Time since account creation
-
-### Current Streak
-
-Shows the number of consecutive training days.
-
-### Longest Streak
-
-Shows the user's longest consecutive workout streak.
-
-### Sessions Per Week
-
-Calculates the user's average number of completed workouts per week.
-
-### Training Time
-
-Displays the total training minutes for recent weeks.
-
-### Workout Frequency
-
-Shows the number of completed workout sessions each week.
-
-### Training Consistency
-
-Calculates how consistently the user has trained across the week.
-
-### Workout Focus Distribution
-
-Shows how completed workouts are distributed across training focuses.
-
-All analytics are generated from real `WorkoutSession` data.
-
----
-
-## Settings
-
-The Settings page allows users to manage their account preferences.
-
-Current functionality includes:
-
-- Theme preferences
-- Password update
-- Logout
-
-The notification button has been removed from the main navigation to keep the interface focused.
-
----
-
-# Tech Stack
-
-## Frontend
-
-- React
-- TypeScript
-- Vite
-- React Router
-- Tailwind CSS
-- Framer Motion
-- Lucide React
-- Axios
-
----
-
-## Backend
-
-- FastAPI
-- Python
-- SQLAlchemy
-- Pydantic
-- JWT Authentication
-- Password hashing
-
----
-
-## Database
-
-The application uses SQLAlchemy models for storing:
-
-- Users
-- User profiles
-- Workout sessions
-
-Main models:
-
-```text
-User
-│
-├── Authentication information
-├── Fitness profile
-├── Age
-├── Height
-├── Weight
-├── Equipment
-└── Workout Sessions
+GymAI is a training operating system: readiness, load, and personalized programming
+in one place. This is the first 50% production-quality build — a complete, polished
+frontend plus a real authentication backend. AI features (workout generation, an AI
+coach, adaptive programming) are intentionally deferred to the next phase; the
+service layer is already shaped so they can be swapped in without a rewrite.
+
+## Stack
+
+**Frontend** — React + Vite + TypeScript, Tailwind CSS, React Router, Framer Motion,
+Axios, Lucide React, and a small set of custom React-Bits-style motion primitives
+(spotlight cards, magnetic buttons, animated headings, scroll reveals) re-themed to
+GymAI's Charcoal + Emerald system.
+
+**Backend** — FastAPI, SQLAlchemy, JWT auth, Pydantic, Uvicorn. SQLite by default for
+local development; the SQLAlchemy URL is Postgres-ready — swap `DATABASE_URL` and
+nothing else changes.
+
+## Brand
+
+Charcoal (`#0B0F0D`) + Emerald (`#10B981` / `#059669` / `#34D399`), Space Grotesk for
+display type, Inter for body text, JetBrains Mono for data figures.
+
+## Signature interaction
+
+The **Evasive Login Button**: while the login/register form is incomplete, the
+button gently slides away from an approaching cursor and settles back to a normal,
+stable button the moment both fields are valid. It's disabled for keyboard focus,
+touch devices, and `prefers-reduced-motion`, so it never blocks anyone from
+submitting the form.
+
+## Project structure
+
+```
+GymAI/
+├── frontend/          React + Vite + TS app
+│   └── src/
+│       ├── components/
+│       │   ├── ui/        Button, Input, PasswordInput, Badge, Modal, Tooltip,
+│       │   │               Avatar, Progress, Skeleton, Spinner
+│       │   ├── layout/     Navbar, Sidebar, MobileNav, PageHeader, Footer, UserMenu, AppShell
+│       │   ├── gymai/      WorkoutCard, ExerciseCard, ExerciseModal, StatCard,
+│       │   │               ReadinessCard, TrainingLoadCard, AIInsightCard, ProgressCard,
+│       │   │               HistoryCard, WorkoutTimer, WorkoutProgress, TrainingStatus
+│       │   ├── landing/    Hero, sections, and the motion primitives (effects.tsx)
+│       │   └── auth/       AuthLayout, EvasiveButton
+│       ├── pages/          Landing, Login, Register, Dashboard, Workout, Exercises,
+│       │                   Progress, History, Profile, Settings, NotFound
+│       ├── data/           Centralized mock data (workouts, exercises, progress, history, insights)
+│       ├── services/       authService (real API) + mock-backed services ready to swap for real APIs
+│       ├── context/        AuthContext, ToastContext
+│       └── routes/         ProtectedRoute
+└── backend/            FastAPI auth service
+    └── app/
+        ├── main.py         App entry, CORS, router mounting
+        ├── config.py       Settings from environment (.env)
+        ├── database.py     SQLAlchemy engine/session (SQLite dev, Postgres-ready)
+        ├── models.py       User model
+        ├── schemas.py      Pydantic request/response models
+        ├── security.py     Password hashing, JWT creation/verification
+        ├── deps.py         get_current_user dependency
+        └── routers/auth.py POST /register, /login, GET /me, POST /logout
+```
+
+## Running it locally
+
+### Backend
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env            # defaults already work for local dev
+uvicorn app.main:app --reload --port 8000
+```
+
+The API is now at `http://localhost:8000` (docs at `/docs`).
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env            # points VITE_API_URL at the backend above
+npm run dev
+```
+
+The app is now at `http://localhost:5173`. Register a new account — it's a real
+account created in the backend's SQLite database (`backend/gymai.db`).
+What's Real vs. Mock
+Authentication is real — registration, login, /me, and logout are connected to the FastAPI backend using JWT authentication and securely hashed passwords.
+User profile integration is in place — authenticated user information can be retrieved from the backend and used by the application.
+Dashboard functionality is currently mock — workouts, exercises, progress, workout history, and AI insights currently use mock data through the service layer in frontend/src/services/.
+Workout recommendation ML is not implemented yet — the exercise dataset, model training, and personalized recommendation API are planned for the next development phase.
+Gemini AI integration for workout personalization is not yet part of the live dashboard flow.
+The frontend service layer is structured so the mock implementations can later be replaced with real FastAPI endpoints without requiring major changes to the UI components.
+## Verified in this build
+
+- `npm run build` (tsc + vite build) completes with no errors.
+- Backend endpoints tested end-to-end: register, duplicate-email rejection, login,
+  wrong-password rejection, `/me` with and without a token, and logout.
+- CORS confirmed working between `localhost:5173` and `localhost:8000`.
