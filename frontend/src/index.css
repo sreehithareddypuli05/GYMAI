@@ -14,7 +14,7 @@
   body {
     @apply bg-charcoal text-ink font-body antialiased;
     background-image:
-      radial-gradient(60% 50% at 50% 0%, rgba(16, 185, 129, 0.08) 0%, rgba(11, 15, 13, 0) 70%);
+      radial-gradient(60% 50% at 50% 0%, rgba(16, 185, 129, 0.08) 0%, rgba(11, 15, 13, 0) 85%);
     background-repeat: no-repeat;
   }
 
