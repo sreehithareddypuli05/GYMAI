@@ -2,6 +2,7 @@ import { NavLink, Link } from 'react-router-dom'
 import { Activity, Dumbbell, History, LayoutDashboard, Library, TrendingUp, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserMenu } from './UserMenu'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const nav = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -43,7 +44,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        <UserMenu />
+        <div className="flex items-center gap-2"><ThemeToggle /><UserMenu /></div>
       </div>
     </header>
   )

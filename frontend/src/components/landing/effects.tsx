@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { useEffect, useState, type ReactNode } from 'react'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 /** Scroll-triggered reveal — a lightweight stand-in for React Bits' scroll-reveal patterns. */
@@ -25,64 +25,14 @@ export function ScrollReveal({
   )
 }
 
-/** Cursor-tracked spotlight glow on a card surface — React Bits-style spotlight card, re-themed for GymAI. */
+/** Static premium card surface — intentionally no cursor-follow animation. */
 export function SpotlightCard({ children, className }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [pos, setPos] = useState({ x: 50, y: 50 })
-
-  const handleMove = (e: React.MouseEvent) => {
-    const rect = ref.current?.getBoundingClientRect()
-    if (!rect) return
-    setPos({
-      x: ((e.clientX - rect.left) / rect.width) * 100,
-      y: ((e.clientY - rect.top) / rect.height) * 100,
-    })
-  }
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      className={cn('relative overflow-hidden card-surface', className)}
-      style={{
-        backgroundImage: `radial-gradient(400px circle at ${pos.x}% ${pos.y}%, rgba(16,185,129,0.10), transparent 60%)`,
-      }}
-    >
-      {children}
-    </div>
-  )
+  return <div className={cn('relative overflow-hidden card-surface', className)}><div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-orange/10 blur-3xl" />{children}</div>
 }
 
-/** Magnetic hover pull — React Bits-style magnetic button, re-themed for GymAI. */
-export function MagneticButton({ children, className, strength = 18 }: { children: ReactNode; className?: string; strength?: number }) {
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const sx = useSpring(x, { stiffness: 200, damping: 14 })
-  const sy = useSpring(y, { stiffness: 200, damping: 14 })
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const relX = e.clientX - rect.left - rect.width / 2
-    const relY = e.clientY - rect.top - rect.height / 2
-    x.set((relX / rect.width) * strength)
-    y.set((relY / rect.height) * strength)
-  }
-
-  const reset = () => {
-    x.set(0)
-    y.set(0)
-  }
-
-  return (
-    <motion.div
-      onMouseMove={handleMove}
-      onMouseLeave={reset}
-      style={{ x: sx, y: sy }}
-      className={cn('inline-block', className)}
-    >
-      {children}
-    </motion.div>
-  )
+/** API-compatible wrapper without magnetic cursor movement. */
+export function MagneticButton({ children, className }: { children: ReactNode; className?: string; strength?: number }) {
+  return <div className={cn('inline-block', className)}>{children}</div>
 }
 
 /** Word-by-word reveal for headline text — React Bits-style animated text, re-themed for GymAI. */

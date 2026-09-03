@@ -201,7 +201,7 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           className="relative overflow-hidden rounded-[28px] border border-emerald/20 bg-surface"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(16,185,129,0.18),transparent_34%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(255,90,0,0.18),transparent_34%)]" />
           <div className="relative flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-5">
               <div className="relative">
@@ -396,7 +396,7 @@ function Choice({ selected, onClick, children }: { selected: boolean; onClick: (
       onClick={onClick}
       className={`min-h-[58px] rounded-xl border px-4 py-3 text-left text-sm transition-all ${
         selected
-          ? 'border-emerald bg-emerald/10 text-emerald shadow-[0_0_0_1px_rgba(16,185,129,0.12)]'
+          ? 'border-emerald bg-emerald/10 text-emerald shadow-[0_0_0_1px_rgba(255,90,0,0.12)]'
           : 'border-surface-borderStrong bg-charcoal/30 text-ink-muted hover:border-emerald/40 hover:bg-surface-raised hover:text-ink'
       }`}
     >

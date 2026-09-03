@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, User } from 'lucide-react'
 import { AuthLayout } from '@/components/auth/AuthLayout'
-import { EvasiveButton } from '@/components/auth/EvasiveButton'
+import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { useAuth } from '@/context/AuthContext'
@@ -78,12 +78,12 @@ export default function Register() {
           </p>
         )}
 
-        <EvasiveButton isValid={isValid} loading={loading} label="Create account" loadingLabel="Creating account…" />
+        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? 'Creating account…' : 'Create account'}</Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-faint">
         Already have an account?{' '}
-        <Link to="/login" className="text-emerald hover:text-emerald-light font-medium transition-colors">
+        <Link to="/login" className="text-orange hover:text-orange-light font-medium transition-colors">
           Log in
         </Link>
       </p>
