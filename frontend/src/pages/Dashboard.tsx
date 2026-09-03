@@ -26,13 +26,12 @@ export default function Dashboard() {
       try {
         setLoading(true); setError(null)
         const [dashboardData, workout] = await Promise.all([getDashboard(), getTodayWorkout(user)])
-        if (!active) return 
+        if (!active) return
         setDashboard(dashboardData); setTodayWorkout(workout)
       } catch {
         if (active) setError('We could not load your training dashboard.')
       } finally { if (active) setLoading(false) }
     }
-    //loads dashboard
     loadDashboard()
     return () => { active = false }
   }, [user])
@@ -57,7 +56,6 @@ export default function Dashboard() {
   const equipment = user?.equipment?.length ? user.equipment.join(' · ') : 'No equipment'
 
   return (
-    //full dashboard page
     <AppShell>
       <div className="mx-auto w-full max-w-7xl space-y-8">
         <motion.header initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-5 border-b border-surface-border pb-7 lg:flex-row lg:items-end lg:justify-between">

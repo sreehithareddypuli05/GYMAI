@@ -164,7 +164,7 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen overflow-hidden bg-charcoal">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.16),transparent_42%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,90,0,0.16),transparent_42%)]" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-12">
         <header className="flex items-center justify-between">
           <button

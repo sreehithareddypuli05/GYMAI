@@ -72,7 +72,7 @@ export function BeginnerPoseTrainer({ exercise, onClose, onComplete }: Props) {
         ctx?.clearRect(0, 0, canvas.width, canvas.height)
         const points = result?.landmarks?.[0] as Landmark[] | undefined
         if (points && ctx) {
-          ctx.fillStyle = '#10B981'
+          ctx.fillStyle = '#FF5A00'
           points.forEach((p) => { if ((p.visibility ?? 1) > 0.35) { ctx.beginPath(); ctx.arc(p.x * canvas.width, p.y * canvas.height, 4, 0, Math.PI * 2); ctx.fill() } })
           const lines = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]]
           ctx.strokeStyle = '#34D399'; ctx.lineWidth = 3

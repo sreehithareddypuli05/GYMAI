@@ -4,6 +4,7 @@ from fastapi import (
     HTTPException,
     status,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app import models, schemas
@@ -67,12 +68,18 @@ def register(
     payload: schemas.UserCreate,
     db: Session = Depends(get_db),
 ):
+    email = str(payload.email).strip().lower()
+    full_name = payload.full_name.strip()
+
+    if len(full_name) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Please enter your full name.",
+        )
+
     existing = (
         db.query(models.User)
-        .filter(
-            models.User.email
-            == payload.email.lower()
-        )
+        .filter(models.User.email == email)
         .first()
     )
 
@@ -86,8 +93,8 @@ def register(
         )
 
     user = models.User(
-        full_name=payload.full_name.strip(),
-        email=payload.email.lower(),
+        full_name=full_name,
+        email=email,
         hashed_password=hash_password(
             payload.password,
         ),
@@ -95,8 +102,15 @@ def register(
     )
 
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    try:
+        db.commit()
+        db.refresh(user)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An account with this email already exists.",
+        )
 
     token = create_access_token(
         subject=str(user.id),
@@ -120,7 +134,7 @@ def login(
         db.query(models.User)
         .filter(
             models.User.email
-            == payload.email.lower()
+            == str(payload.email).strip().lower()
         )
         .first()
     )

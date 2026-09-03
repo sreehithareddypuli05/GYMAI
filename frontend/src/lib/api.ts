@@ -23,9 +23,7 @@ api.interceptors.response.use(
     if (error?.response?.status === 401) {
       localStorage.removeItem('gymai_token')
       localStorage.removeItem('gymai_user')
-      if (window.location.pathname.startsWith('/dashboard') || window.location.pathname !== '/login') {
-        // let AuthContext handle redirect; avoid hard reload loops on the login page itself
-      }
+      // AuthContext owns session state and navigation; do not hard-reload here.
     }
     return Promise.reject(error)
   }
