@@ -27,8 +27,50 @@ export default function Landing() {
         <div className="container-shell">
           <div className="mb-12 max-w-2xl"><p className="label-eyebrow mb-3">Simple from the first session</p><h2 className="cinematic-heading text-4xl sm:text-5xl">TURN YOUR GOAL<br /><span>INTO A ROUTINE.</span></h2></div>
           <div className="process-grid">
-            {[['Set your direction','Choose your goal, experience, schedule and the equipment you can use.'],['Get a focused session','GymAI turns those details into a practical workout you can start immediately.'],['Train with guidance','Follow visual exercise cues and keep your attention on quality movement.'],['Build momentum','Completed sessions become useful context for smarter training ahead.']].map(([t,b]) => <motion.div key={t} className="process-card"><h3>{t}</h3><p>{b}</p></motion.div>)}
-          </div>
+              {[
+                [
+                  '01',
+                  'Set your direction',
+                  'Choose your goal, experience, schedule and the equipment you can use.',
+                  '◎'
+                ],
+                [
+                  '02',
+                  'Get a focused session',
+                  'GymAI turns those details into a practical workout you can start immediately.',
+                  '◈'
+                ],
+                [
+                  '03',
+                  'Train with guidance',
+                  'Follow visual exercise cues and keep your attention on quality movement.',
+                  '◉'
+                ],
+                [
+                  '04',
+                  'Build momentum',
+                  'Completed sessions become useful context for smarter training ahead.',
+                  '↗'
+                ]
+              ].map(([number, title, body, icon], index) => (
+                <motion.div
+                  key={title}
+                  className={`process-card process-card-${index + 1}`}
+                >
+                  <div className="process-card-top">
+                    <span className="process-number">{number}</span>
+                    <span className="process-icon">{icon}</span>
+                  </div>
+
+                  <div className="process-card-content">
+                    <span className="process-step">STEP {number}</span>
+                    <h3>{title}</h3>
+                    <p>{body}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          
         </div>
       </section>
       <section id="ai-form" className="form-section border-t border-white/10 py-20 sm:py-28">
