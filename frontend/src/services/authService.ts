@@ -98,3 +98,23 @@ export async function changePassword(
 export async function logoutUser(): Promise<void> {
   await api.post('/auth/logout')
 }
+
+export async function requestPasswordReset(email: string): Promise<string> {
+  const { data } = await api.post<{ detail: string }>(
+    '/auth/forgot-password',
+    { email },
+  )
+  return data.detail
+}
+
+export async function resetPassword(
+  email: string,
+  code: string,
+  newPassword: string,
+): Promise<string> {
+  const { data } = await api.post<{ detail: string }>(
+    '/auth/reset-password',
+    { email, code, new_password: newPassword },
+  )
+  return data.detail
+}

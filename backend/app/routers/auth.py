@@ -4,7 +4,15 @@ from fastapi import (
     HTTPException,
     status,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from datetime import datetime, timezone, timedelta
+import hashlib
+import secrets
+import smtplib
+from email.message import EmailMessage
+
+from app.config import settings
 
 from app import models, schemas
 from app.database import get_db
@@ -67,12 +75,18 @@ def register(
     payload: schemas.UserCreate,
     db: Session = Depends(get_db),
 ):
+    email = str(payload.email).strip().lower()
+    full_name = payload.full_name.strip()
+
+    if len(full_name) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Please enter your full name.",
+        )
+
     existing = (
         db.query(models.User)
-        .filter(
-            models.User.email
-            == payload.email.lower()
-        )
+        .filter(models.User.email == email)
         .first()
     )
 
@@ -86,8 +100,8 @@ def register(
         )
 
     user = models.User(
-        full_name=payload.full_name.strip(),
-        email=payload.email.lower(),
+        full_name=full_name,
+        email=email,
         hashed_password=hash_password(
             payload.password,
         ),
@@ -95,8 +109,15 @@ def register(
     )
 
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    try:
+        db.commit()
+        db.refresh(user)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An account with this email already exists.",
+        )
 
     token = create_access_token(
         subject=str(user.id),
@@ -120,7 +141,7 @@ def login(
         db.query(models.User)
         .filter(
             models.User.email
-            == payload.email.lower()
+            == str(payload.email).strip().lower()
         )
         .first()
     )
@@ -217,6 +238,100 @@ def change_password(
         "detail": "Password updated successfully."
     }
 
+
+
+def _hash_reset_code(code: str) -> str:
+    return hashlib.sha256(code.encode("utf-8")).hexdigest()
+
+
+def _send_reset_email(email: str, code: str) -> None:
+    if not settings.smtp_username or not settings.smtp_password or not settings.smtp_from_email:
+        raise HTTPException(status_code=503, detail="Email service is not configured. Set SMTP_USERNAME, SMTP_PASSWORD and SMTP_FROM_EMAIL in backend/.env.")
+
+    message = EmailMessage()
+    message["Subject"] = "Your GymAI password reset code"
+    message["From"] = settings.smtp_from_email
+    message["To"] = email
+    message.set_content(
+        f"Your GymAI password reset code is {code}.\n\n"
+        f"This code expires in {settings.reset_code_expire_minutes} minutes. "
+        "If you did not request a password reset, you can ignore this email."
+    )
+    try:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as server:
+            if settings.smtp_use_tls:
+                server.starttls()
+            server.login(settings.smtp_username, settings.smtp_password)
+            server.send_message(message)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="Could not send the reset email. Check your SMTP settings.") from exc
+
+
+@router.post("/forgot-password")
+def forgot_password(payload: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    email = str(payload.email).strip().lower()
+    user = db.query(models.User).filter(models.User.email == email).first()
+
+    # Invalidate previous codes for this user.
+    if user:
+        db.query(models.PasswordResetCode).filter(
+            models.PasswordResetCode.user_id == user.id,
+            models.PasswordResetCode.used.is_(False),
+        ).update({"used": True}, synchronize_session=False)
+        code = f"{secrets.randbelow(1_000_000):06d}"
+        reset = models.PasswordResetCode(
+            user_id=user.id,
+            code_hash=_hash_reset_code(code),
+            expires_at=datetime.now(timezone.utc) + timedelta(minutes=settings.reset_code_expire_minutes),
+            attempts=0,
+            used=False,
+        )
+        db.add(reset)
+        db.commit()
+        try:
+            _send_reset_email(email, code)
+        except HTTPException:
+            db.delete(reset)
+            db.commit()
+            raise
+
+    return {"detail": "If an account exists for that email, a verification code has been sent."}
+
+
+@router.post("/reset-password")
+def reset_password(payload: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
+    email = str(payload.email).strip().lower()
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code.")
+
+    reset = db.query(models.PasswordResetCode).filter(
+        models.PasswordResetCode.user_id == user.id,
+        models.PasswordResetCode.used.is_(False),
+    ).order_by(models.PasswordResetCode.created_at.desc()).first()
+    if not reset:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code.")
+
+    now = datetime.now(timezone.utc)
+    expires = reset.expires_at
+    if expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+    if expires < now or reset.attempts >= 5:
+        reset.used = True
+        db.commit()
+        raise HTTPException(status_code=400, detail="Invalid or expired verification code.")
+
+    if not secrets.compare_digest(reset.code_hash, _hash_reset_code(payload.code)):
+        reset.attempts += 1
+        if reset.attempts >= 5:
+            reset.used = True
+        db.commit()
+        raise HTTPException(status_code=400, detail="Invalid verification code.")
+
+    user.hashed_password = hash_password(payload.new_password)
+    reset.used = True
+    db.commit()
+    return {"detail": "Password reset successfully. You can now log in."}
 
 @router.post(
     "/logout",

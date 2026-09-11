@@ -44,7 +44,7 @@ GymAI/
 │       │   │               ReadinessCard, TrainingLoadCard, AIInsightCard, ProgressCard,
 │       │   │               HistoryCard, WorkoutTimer, WorkoutProgress, TrainingStatus
 │       │   ├── landing/    Hero, sections, and the motion primitives (effects.tsx)
-│       │   └── auth/       AuthLayout, EvasiveButton
+│       │   └── auth/       AuthLayout
 │       ├── pages/          Landing, Login, Register, Dashboard, Workout, Exercises,
 │       │                   Progress, History, Profile, Settings, NotFound
 │       ├── data/           Centralized mock data (workouts, exercises, progress, history, insights)

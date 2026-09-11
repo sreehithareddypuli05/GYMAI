@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail } from 'lucide-react'
 import { AuthLayout } from '@/components/auth/AuthLayout'
-import { EvasiveButton } from '@/components/auth/EvasiveButton'
+import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { useAuth } from '@/context/AuthContext'
@@ -51,14 +51,19 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput
+        <div>
+          <PasswordInput
           label="Password"
           name="password"
           autoComplete="current-password"
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        />
+          />
+          <div className="mt-2 text-right">
+            <Link to="/forgot-password" className="text-sm text-orange hover:text-orange-light font-medium transition-colors">Forgot password?</Link>
+          </div>
+        </div>
 
         {error && (
           <p role="alert" className="rounded-lg border border-danger/25 bg-danger/10 px-3.5 py-2.5 text-sm text-danger">
@@ -66,12 +71,12 @@ export default function Login() {
           </p>
         )}
 
-        <EvasiveButton isValid={isValid} loading={loading} label="Log in" loadingLabel="Signing in…" />
+        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? 'Signing in…' : 'Log in'}</Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-faint">
         New to GymAI?{' '}
-        <Link to="/register" className="text-emerald hover:text-emerald-light font-medium transition-colors">
+        <Link to="/register" className="text-orange hover:text-orange-light font-medium transition-colors">
           Create an account
         </Link>
       </p>
