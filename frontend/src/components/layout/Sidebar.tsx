@@ -14,7 +14,7 @@ const nav = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:shrink-0 lg:flex-col border-r border-surface-border bg-surface/40 backdrop-blur-sm">
+    <aside className="hidden lg:flex lg:w-64 lg:shrink-0 lg:flex-col border-r border-surface-border bg-surface">
       <div className="flex items-center gap-2 px-6 py-6">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald/15 text-emerald">
           <Activity size={17} />

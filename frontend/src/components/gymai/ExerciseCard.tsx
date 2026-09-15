@@ -1,5 +1,6 @@
 import { Dumbbell } from 'lucide-react'
 import { ExerciseImageGallery } from '@/components/gymai/ExerciseImageGallery'
+import { PlayCircle } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import type { Exercise } from '@/types'
 
@@ -20,9 +21,12 @@ export function ExerciseCard({ exercise, onClick }: { exercise: Exercise; onClic
       </div>
       <p className="font-medium text-ink mb-1">{exercise.name}</p>
       <p className="text-xs text-ink-faint">{exercise.muscleGroup} · {exercise.equipment}</p>
-      <div className="mt-3 flex items-center gap-3 text-xs text-ink-muted font-mono">
+      <div className="mt-3 flex items-center justify-between text-xs text-ink-muted font-mono">
         <span>{exercise.sets} sets</span>
         <span>{exercise.reps} reps</span>
+      </div>
+      <div className="mt-4 flex items-center gap-2 border-t border-surface-border pt-3 text-xs font-semibold text-orange">
+        <PlayCircle size={15} /> Video Coming Soon
       </div>
     </button>
   )

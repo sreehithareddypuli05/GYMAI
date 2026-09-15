@@ -16,7 +16,7 @@ const nav = [
 export function Navbar() {
   return (
     <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-6xl -translate-x-1/2">
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-surface-borderStrong bg-charcoal/85 px-3 py-2 shadow-card backdrop-blur-xl">
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-surface-borderStrong bg-charcoal px-3 py-2 shadow-card ">
         <Link to="/dashboard" className="flex shrink-0 items-center gap-2 rounded-xl px-2 py-1.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald/15 text-emerald">
             <Activity size={17} />

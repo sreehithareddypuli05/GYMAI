@@ -112,6 +112,22 @@ class TokenResponse(BaseModel):
 
 
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class VerifyResetCode(BaseModel):
+    email: EmailStr
+    code: str = Field(min_length=6, max_length=6)
+    new_password: str = Field(min_length=6, max_length=128)
+    confirm_password: str = Field(min_length=6, max_length=128)
+
+
+class PasswordResetVerification(BaseModel):
+    email: EmailStr
+    code: str = Field(min_length=6, max_length=6)
+
+
 # --------------------------------
 # Training profile
 # --------------------------------
@@ -314,6 +330,7 @@ class ExerciseOut(BaseModel):
     goal_tags: list[str]
     image_url: str
     image_urls: list[str] = []
+    video_url: str | None = None
     pose_supported: bool
     pose_type: str | None = None
     model_config = ConfigDict(from_attributes=True)

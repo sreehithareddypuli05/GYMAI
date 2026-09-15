@@ -591,3 +591,76 @@
 :root.light .gym-image-field-glow{background:radial-gradient(circle at 50% 45%,rgba(255,90,0,.18),transparent 43%),radial-gradient(circle at 50% 70%,rgba(30,30,30,.06),transparent 45%)}
 :root.light .gym-image-field-vignette{background:linear-gradient(90deg,#fffaf5 0%,rgba(255,250,245,.86) 17%,rgba(255,250,245,.34) 35%,rgba(255,250,245,.34) 65%,rgba(255,250,245,.86) 83%,#fffaf5 100%),linear-gradient(180deg,#fffaf5 0%,transparent 14%,transparent 84%,#fffaf5 100%)}
 :root.light .ai-feature-section .ai-feature-card{background:rgba(255,255,255,.84);border-color:rgba(30,30,30,.09)}
+
+
+/* ===== CLEAN APP UI: solid surfaces, fewer glass effects ===== */
+.card-surface {
+  background: rgb(var(--surface));
+  border-color: rgb(var(--surface-border) / .12);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.bg-surface\/40, .bg-surface\/50, .bg-surface\/60, .bg-surface\/70, .bg-surface\/80 {
+  background-color: rgb(var(--surface) / 1) !important;
+  backdrop-filter: none !important;
+}
+[class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+@media (min-width: 1024px) {
+  main > div { position: relative; }
+}
+
+/* ===== GymAI real-gym dashboard layer ===== */
+.gym-app-bg{position:relative;isolation:isolate}
+.gym-app-bg::before{content:"";position:fixed;inset:0;z-index:-2;background-image:url('/images/gym-background.jpg');background-size:cover;background-position:center;opacity:.075;filter:saturate(.75) contrast(1.05);pointer-events:none}
+.gym-app-bg::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,9,8,.94),rgba(7,9,8,.975));pointer-events:none}
+.gym-app-bg .card-surface{background:rgb(var(--surface)/.94);backdrop-filter:none}
+.settings-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;max-width:980px}
+.settings-card{display:flex;gap:16px;border:1px solid rgb(var(--surface-border)/.14);background:rgb(var(--surface)/.96);padding:24px;box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.settings-card-accent{border-color:rgba(255,90,0,.28)}
+.settings-card-icon{width:42px;height:42px;flex:0 0 auto;display:grid;place-items:center;background:rgba(255,90,0,.09);border:1px solid rgba(255,90,0,.2);color:#FF5A00}
+.settings-card-copy{min-width:0}
+.settings-card-copy h2{margin-top:7px;font-size:20px;font-weight:700;color:rgb(var(--ink))}
+.settings-card-copy>p:not(.label-eyebrow){margin-top:7px;color:rgb(var(--ink-muted));font-size:13px;line-height:1.65}
+.settings-action{display:inline-flex;margin-top:15px;font-size:13px;font-weight:700;color:#FF6A19;border-bottom:1px solid rgba(255,90,0,.35);padding-bottom:2px}
+.settings-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.settings-meta span{border:1px solid rgb(var(--surface-border)/.14);padding:6px 9px;font-size:10px;color:rgb(var(--ink-muted))}
+.settings-danger{border-color:rgba(248,113,113,.2)}
+@media(max-width:800px){.settings-layout{grid-template-columns:1fr}.settings-card{padding:20px}}
+/* Consistency / streak board */
+.streak-board{position:relative;overflow:hidden;border:1px solid rgba(255,90,0,.24);background:linear-gradient(135deg,rgba(35,22,15,.98),rgba(21,26,23,.98));padding:22px}
+.streak-board::after{content:"";position:absolute;width:190px;height:190px;right:-70px;top:-80px;border-radius:50%;background:rgba(255,90,0,.11);filter:blur(4px)}
+.streak-fire{filter:drop-shadow(0 0 12px rgba(255,90,0,.4))}
+.streak-days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.streak-day{border:1px solid rgb(var(--surface-border)/.12);background:rgb(var(--surface)/.72);padding:9px 5px;text-align:center}
+.streak-day.done{border-color:rgba(255,90,0,.38);background:rgba(255,90,0,.10)}
+.streak-day.today{box-shadow:inset 0 -2px 0 #FF5A00}
+
+/* ===== GitHub-inspired settings: compact navigation + simple rows ===== */
+.github-settings{display:grid;grid-template-columns:190px minmax(0,780px);gap:34px;max-width:1050px;align-items:start}
+.github-settings-nav{position:sticky;top:24px;padding-top:4px}
+.github-settings-nav-title{padding:0 12px 9px;font-size:13px;font-weight:700;color:rgb(var(--ink))}
+.github-settings-nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:2px 0;border-radius:7px;font-size:13px;color:rgb(var(--ink-muted));transition:background .15s,color .15s}
+.github-settings-nav-item:hover{background:rgb(var(--surface-raised));color:rgb(var(--ink))}
+.github-settings-nav-item.active{background:rgb(var(--surface-raised));color:rgb(var(--ink));font-weight:600;box-shadow:inset 2px 0 0 #FF5A00}
+.github-settings-content{min-width:0}
+.github-settings-section{padding:0 0 25px;margin-bottom:25px;border-bottom:1px solid rgb(var(--surface-border)/.14)}
+.github-settings-section:last-child{margin-bottom:0}
+.github-section-heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.github-section-heading h2{font-size:18px;line-height:1.35;font-weight:650;letter-spacing:-.01em;color:rgb(var(--ink))}
+.github-section-heading p{margin-top:4px;font-size:13px;line-height:1.55;color:rgb(var(--ink-muted))}
+.github-row,.github-about-box{display:flex;align-items:center;gap:14px;min-height:70px;padding:15px 16px;border:1px solid rgb(var(--surface-border)/.15);border-radius:7px;background:rgb(var(--surface)/.98)}
+.github-row-icon{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:6px;background:rgb(var(--surface-raised));color:rgb(var(--ink-muted))}
+.github-row-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:3px}
+.github-row-copy strong{font-size:13px;font-weight:600;color:rgb(var(--ink))}
+.github-row-copy span{font-size:12px;line-height:1.5;color:rgb(var(--ink-muted));overflow-wrap:anywhere}
+.github-row-button{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;border:1px solid rgb(var(--surface-border)/.22);border-radius:6px;padding:6px 10px;font-size:12px;font-weight:600;color:rgb(var(--ink));background:rgb(var(--surface-raised));transition:border-color .15s,background .15s}
+.github-row-button:hover{border-color:rgba(255,90,0,.45);background:rgb(var(--surface))}
+.github-about-box{align-items:flex-start}
+.github-link-row{color:inherit}
+.github-link-row:hover{border-color:rgba(255,90,0,.32)}
+.github-row-arrow{color:rgb(var(--ink-faint))}
+.github-danger-section{border-bottom:0;padding-bottom:10px}
+.github-danger-row{border-color:rgba(248,113,113,.22)}
+@media(max-width:850px){.github-settings{grid-template-columns:1fr;gap:18px}.github-settings-nav{position:static;display:flex;gap:5px;overflow-x:auto;border-bottom:1px solid rgb(var(--surface-border)/.14);padding-bottom:8px}.github-settings-nav-title{display:none}.github-settings-nav-item{white-space:nowrap}.github-settings-nav-item.active{box-shadow:inset 0 -2px 0 #FF5A00}}
+@media(max-width:560px){.github-row,.github-about-box{align-items:flex-start}.github-row-button{font-size:11px;padding:6px 8px}.github-row-icon{display:none}.github-settings-section{padding-bottom:20px;margin-bottom:20px}}

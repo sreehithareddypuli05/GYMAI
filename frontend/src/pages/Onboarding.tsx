@@ -122,13 +122,13 @@ export default function Onboarding() {
 
       const updated = await updateProfile(payload)
       updateUser({
-        age: updated.age,
-        weight_kg: updated.weight_kg,
-        height_cm: updated.height_cm,
-        goal: updated.goal,
-        fitness_level: updated.fitness_level,
-        equipment: updated.equipment,
-        training_frequency: updated.training_frequency,
+        age: updated.age ?? undefined,
+        weight_kg: updated.weight_kg ?? undefined,
+        height_cm: updated.height_cm ?? undefined,
+        goal: updated.goal ?? undefined,
+        fitness_level: updated.fitness_level ?? undefined,
+        equipment: updated.equipment ?? undefined,
+        training_frequency: updated.training_frequency ?? undefined,
         profile_completed: updated.profile_completed,
       })
 

@@ -1,189 +1,96 @@
-import {
-  useState,
-} from 'react'
-
-import {
-  LogOut,
-  Shield,
-  User,
-} from 'lucide-react'
-
+import { Link } from 'react-router-dom'
+import { ChevronRight, ExternalLink, Info, LogOut, Mail, ShieldCheck, UserRound } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/Button'
-import { PasswordInput } from '@/components/ui/PasswordInput'
-
-import {
-  useAuth,
-} from '@/context/AuthContext'
-
-import {
-  useToast,
-} from '@/context/ToastContext'
-
-import {
-  changePassword,
-} from '@/services/authService'
-
+import { useAuth } from '@/context/AuthContext'
 
 export default function Settings() {
-  const [currentPw, setCurrentPw] =
-    useState('')
-
-  const [newPw, setNewPw] =
-    useState('')
-
-  const [loading, setLoading] =
-    useState(false)
-
-  const {
-    logout,
-  } = useAuth()
-
-  const {
-    showToast,
-  } = useToast()
-
-
-  async function handlePasswordChange() {
-    if (
-      !currentPw ||
-      !newPw
-    ) {
-      showToast(
-        'Please enter both passwords.',
-        'error',
-      )
-
-      return
-    }
-
-    if (
-      newPw.length < 6
-    ) {
-      showToast(
-        'New password must be at least 6 characters.',
-        'error',
-      )
-
-      return
-    }
-
-    try {
-      setLoading(true)
-
-      await changePassword(
-        currentPw,
-        newPw,
-      )
-
-      showToast(
-        'Password updated successfully.',
-        'success',
-      )
-
-      setCurrentPw('')
-      setNewPw('')
-    } catch (error: any) {
-      const message =
-        error?.response?.data?.detail ||
-        'Could not update password.'
-
-      showToast(
-        message,
-        'error',
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  const { logout, user } = useAuth()
 
   return (
     <AppShell>
-      <PageHeader
-        eyebrow="Settings"
-        title="Account settings"
-        description="Manage your account and security."
-      />
+      <PageHeader eyebrow="Account" title="Settings" description="Manage your GymAI account, security and support preferences." />
 
-      <div className="max-w-2xl space-y-6">
+      <div className="github-settings">
+        <aside className="github-settings-nav" aria-label="Settings sections">
+          <p className="github-settings-nav-title">Settings</p>
+          <a href="#account" className="github-settings-nav-item active"><UserRound size={15} /> Account</a>
+          <a href="#security" className="github-settings-nav-item"><ShieldCheck size={15} /> Security</a>
+          <a href="#about" className="github-settings-nav-item"><Info size={15} /> About GymAI</a>
+          <a href="#contact" className="github-settings-nav-item"><Mail size={15} /> Contact</a>
+        </aside>
 
-        {/* Security */}
+        <div className="github-settings-content">
+          <section id="account" className="github-settings-section">
+            <div className="github-section-heading">
+              <div>
+                <h2>Account</h2>
+                <p>Your basic GymAI account information.</p>
+              </div>
+            </div>
+            <div className="github-row">
+              <div className="github-row-icon"><UserRound size={18} /></div>
+              <div className="github-row-copy"><strong>{user?.full_name || 'GymAI member'}</strong><span>{user?.email || 'No email available'}</span></div>
+              <Link to="/profile" className="github-row-button">View profile <ChevronRight size={15} /></Link>
+            </div>
+          </section>
 
-        <div className="card-surface p-6">
+          <section id="security" className="github-settings-section">
+            <div className="github-section-heading">
+              <div>
+                <h2>Password and security</h2>
+                <p>Keep your account protected with a verified password reset.</p>
+              </div>
+            </div>
+            <div className="github-row">
+              <div className="github-row-icon"><ShieldCheck size={18} /></div>
+              <div className="github-row-copy"><strong>Forgot password</strong><span>Verify your email with a one-time code, then choose a new password.</span></div>
+              <Link to="/forgot-password" className="github-row-button">Reset password <ChevronRight size={15} /></Link>
+            </div>
+          </section>
 
-          <p className="label-eyebrow mb-3 flex items-center gap-1.5">
-            <Shield size={12} />
-            Security
-          </p>
+          <section id="about" className="github-settings-section">
+            <div className="github-section-heading">
+              <div>
+                <h2>About GymAI</h2>
+                <p>Learn what your fitness dashboard is built to help you do.</p>
+              </div>
+            </div>
+            <div className="github-about-box">
+              <div className="github-row-icon"><Info size={18} /></div>
+              <div className="github-row-copy"><strong>GymAI — Intelligent Fitness System</strong><span>Personalized workouts, exercise guidance, progress tracking and consistency tools in one place.</span></div>
+            </div>
+          </section>
 
-          <div className="mb-4 space-y-3">
+          <section id="contact" className="github-settings-section">
+            <div className="github-section-heading">
+              <div>
+                <h2>Contact us</h2>
+                <p>Need help with your GymAI account or training experience?</p>
+              </div>
+            </div>
+            <a href="mailto:support@gymai.app" className="github-row github-link-row">
+              <div className="github-row-icon"><Mail size={18} /></div>
+              <div className="github-row-copy"><strong>GymAI support</strong><span>support@gymai.app</span></div>
+              <ExternalLink size={15} className="github-row-arrow" />
+            </a>
+          </section>
 
-            <PasswordInput
-              label="Current password"
-              placeholder="Enter current password"
-              value={currentPw}
-              onChange={(e) =>
-                setCurrentPw(
-                  e.target.value,
-                )
-              }
-            />
-
-            <PasswordInput
-              label="New password"
-              placeholder="At least 6 characters"
-              value={newPw}
-              onChange={(e) =>
-                setNewPw(
-                  e.target.value,
-                )
-              }
-            />
-
-          </div>
-
-          <Button
-            variant="secondary"
-            onClick={
-              handlePasswordChange
-            }
-            disabled={loading}
-          >
-            {loading
-              ? 'Updating...'
-              : 'Update password'}
-          </Button>
-
+          <section className="github-settings-section github-danger-section">
+            <div className="github-section-heading">
+              <div>
+                <h2>Session</h2>
+                <p>Sign out of GymAI on this device. Your account data stays intact.</p>
+              </div>
+            </div>
+            <div className="github-row github-danger-row">
+              <div className="github-row-icon"><LogOut size={18} /></div>
+              <div className="github-row-copy"><strong>Log out</strong><span>End your current GymAI session.</span></div>
+              <Button variant="danger" size="sm" onClick={() => logout()}><LogOut size={14} /> Log out</Button>
+            </div>
+          </section>
         </div>
-
-
-        {/* Account */}
-
-        <div className="card-surface p-6">
-
-          <p className="label-eyebrow mb-1 flex items-center gap-1.5">
-            <User size={12} />
-            Account
-          </p>
-
-          <p className="mb-4 text-xs text-ink-faint">
-            Sign out of GymAI on this device.
-          </p>
-
-          <Button
-            variant="danger"
-            onClick={() =>
-              logout()
-            }
-          >
-            <LogOut size={15} />
-            Log out
-          </Button>
-
-        </div>
-
       </div>
     </AppShell>
   )

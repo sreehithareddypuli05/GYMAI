@@ -1,6 +1,6 @@
 import { Modal } from '@/components/ui/Modal'
 import { Badge } from '@/components/ui/Badge'
-import { Clock, Dumbbell, Target } from 'lucide-react'
+import { Clock, Dumbbell, Target, PlayCircle } from 'lucide-react'
 import { ExerciseImageGallery } from '@/components/gymai/ExerciseImageGallery'
 import type { Exercise } from '@/types'
 
@@ -17,6 +17,10 @@ export function ExerciseModal({ exercise, open, onClose }: { exercise: Exercise 
         <Badge variant="neutral">{exercise.equipment}</Badge>
       </div>
       <p className="text-sm text-ink-muted leading-relaxed mb-5">{exercise.description}</p>
+      <div className="mb-5 flex items-center gap-3 rounded-xl border border-surface-border bg-surface-raised p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange/10 text-orange"><PlayCircle size={19} /></div>
+        <div><p className="text-sm font-semibold text-ink">Exercise video</p><p className="text-xs text-ink-faint">Video Coming Soon</p></div>
+      </div>
       <div className="grid grid-cols-3 gap-3 mb-5">
         <div className="rounded-xl bg-surface-raised p-3 text-center">
           <Target size={15} className="mx-auto mb-1.5 text-emerald" />

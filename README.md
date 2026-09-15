@@ -123,3 +123,40 @@ The profile foundation is now backend-connected.
 GymAI uses **MediaPipe Pose Landmarker** in the browser for supported Beginner exercises. The camera stream is processed locally; only summarized reps/form metrics are sent to the FastAPI backend. Supported exercise types are squat, pushup, lunge, bicep curl, and shoulder press. Intermediate and Advanced users do not receive pose checking.
 
 The MediaPipe Tasks Vision runtime is loaded from the package CDN at runtime, so the repository does not store the WASM runtime or pose model. Camera access requires browser permission and HTTPS in production (localhost is permitted during development).
+
+
+## New production features
+
+### Forgot password / email verification
+GymAI now includes a real email-based password reset flow:
+
+1. User opens **Forgot password**.
+2. The backend checks that the email belongs to a registered GymAI account.
+3. A cryptographically random 6-digit code is emailed through SMTP.
+4. The code expires after 10 minutes and is limited to 5 incorrect attempts.
+5. The user enters the code and a new password.
+6. The password is securely hashed and updated in the database.
+
+Configure these environment variables on the deployed backend (Render/Railway/etc.):
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-16-character-google-app-password
+SMTP_FROM=GymAI <your-email@gmail.com>
+SMTP_USE_TLS=true
+PASSWORD_RESET_EXPIRE_MINUTES=10
+PASSWORD_RESET_RESEND_SECONDS=60
+```
+
+For Gmail, use a Google **App Password**, not your normal Gmail password. Do not commit `.env` or SMTP credentials to GitHub.
+
+### Profile gating
+New accounts can sign in, but dashboard, workout, exercises, progress, history and settings stay locked until the training profile is complete. The user sees a clear **Complete your profile to unlock this page** screen instead of being silently redirected.
+
+### Guided profile
+The profile is now a step-by-step experience: name → avatar/photo → age → height → weight → goal → experience → equipment → training frequency. It includes selectable avatar presets and compressed photo upload.
+
+### UI refresh
+The application UI has been moved away from heavy glassmorphism. App pages use solid surfaces, clearer borders, stronger hierarchy and lighter card usage. Blur/backdrop effects are disabled for the application shell and reusable cards.

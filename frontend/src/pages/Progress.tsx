@@ -178,6 +178,13 @@ export default function ProgressPage() {
       </div>
 
 
+      <section className="streak-board mb-6">
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div><p className="label-eyebrow">Streak health</p><h2 className="mt-1 font-display text-2xl font-bold text-ink">Keep the chain moving</h2><p className="mt-1 text-sm text-ink-muted">Today is complete when you finish at least one workout session.</p></div>
+          <div className="flex items-center gap-3"><Flame className="streak-fire text-orange" size={34} fill="currentColor" /><div><p className="font-mono text-2xl font-bold text-ink">{data.currentStreak} days</p><p className="text-[10px] uppercase tracking-wider text-ink-faint">current streak</p></div></div>
+        </div>
+      </section>
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
 
         <ProgressCard
