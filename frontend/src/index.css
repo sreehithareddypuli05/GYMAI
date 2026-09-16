@@ -19,6 +19,10 @@
     --ink: 28 28 28; --ink-muted: 92 92 92; --ink-faint: 125 125 125;
     color-scheme: light;
   }
+  :root.light .hero-title i{
+  -webkit-text-stroke:1px #1c1c1c;
+}
+
   body { @apply bg-charcoal text-ink font-body antialiased; transition: background-color .25s ease, color .25s ease; }
   h1,h2,h3,h4 { @apply font-display tracking-tight; }
   ::selection { background:rgba(255,90,0,.30); color:#F5F7F6; }
