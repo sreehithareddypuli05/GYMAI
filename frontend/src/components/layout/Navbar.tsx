@@ -1,7 +1,8 @@
 import { NavLink, Link } from 'react-router-dom'
-import { Activity, Dumbbell, History, LayoutDashboard, Library, TrendingUp, User } from 'lucide-react'
+import { Activity, Dumbbell, History, LayoutDashboard, Library, TimerReset, TrendingUp, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserMenu } from './UserMenu'
+import { NotificationBell } from '@/components/layout/NotificationBell'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const nav = [
@@ -10,6 +11,7 @@ const nav = [
   { to: '/exercises', label: 'Exercises', icon: Library },
   { to: '/progress', label: 'Progress', icon: TrendingUp },
   { to: '/history', label: 'History', icon: History },
+  { to: '/marathons', label: 'Marathons', icon: TimerReset },
   { to: '/profile', label: 'Profile', icon: User },
 ]
 
@@ -44,7 +46,11 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2"><ThemeToggle /><UserMenu /></div>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <ThemeToggle />
+          <UserMenu />
+        </div>
       </div>
     </header>
   )

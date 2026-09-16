@@ -4,7 +4,7 @@ export const mockProfile: UserProfile = {
   fitnessLevel: 'Intermediate',
   goal: 'Build Muscle',
   trainingFrequency: 5,
-  equipment: ['Barbell', 'Dumbbell', 'Cable', 'Bodyweight'],
+  equipment: ['Barbell', 'Dumbbells', 'Resistance Bands', 'Exercise Mat'],
 }
 
 export const readiness = 82

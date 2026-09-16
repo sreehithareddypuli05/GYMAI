@@ -50,16 +50,19 @@ export type MuscleGroup =
   | 'Core'
   | 'Full Body'
 
-export type Equipment =
-  | 'None'
-  | 'Barbell'
-  | 'Dumbbell'
-  | 'Machine'
-  | 'Bodyweight'
-  | 'Cable'
-  | 'Kettlebell'
-  | 'Bands'
-  | 'Full Gym'
+export const equipmentValues = [
+  'No Equipment',
+  'Dumbbells',
+  'Barbell',
+  'Bench',
+  'Resistance Bands',
+  'Pull-up Bar',
+  'Kettlebell',
+  'Treadmill',
+  'Exercise Mat',
+] as const
+
+export type Equipment = typeof equipmentValues[number]
 
 export interface Exercise {
   id: string

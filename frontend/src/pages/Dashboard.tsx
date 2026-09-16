@@ -54,6 +54,8 @@ export default function Dashboard() {
   const goal = user?.goal || 'General Fitness'
   const level = user?.fitness_level || 'Beginner'
   const equipment = user?.equipment?.length ? user.equipment.join(' · ') : 'No equipment'
+  const activity = dashboard.activity ?? []
+  const recentWorkouts = dashboard.recent_workouts ?? []
 
   return (
     <AppShell>
@@ -90,7 +92,7 @@ export default function Dashboard() {
           <div className="relative z-10 mt-5">
             <div className="mb-2 flex justify-between text-[10px] uppercase tracking-wider text-ink-faint"><span>Weekly training</span><span>{dashboard.workouts_this_week} completed</span></div>
             <div className="streak-days">
-              {dashboard.activity.map((day, index) => {
+              {activity.map((day, index) => {
                 const today = new Date().getDay()
                 const mondayIndex = today === 0 ? 6 : today - 1
                 const isToday = index === mondayIndex
@@ -114,9 +116,9 @@ export default function Dashboard() {
         <section className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
           <div>
             <div className="mb-4"><p className="label-eyebrow">Training signal</p><h2 className="mt-2 font-display text-2xl font-semibold text-ink">Activity this week</h2></div>
-            <div className="border border-surface-border bg-surface p-5 sm:p-6"><DashboardActivity activity={dashboard.activity} /></div>
+            <div className="border border-surface-border bg-surface p-5 sm:p-6"><DashboardActivity activity={activity} /></div>
           </div>
-          <RecentWorkouts workouts={dashboard.recent_workouts} />
+          <RecentWorkouts workouts={recentWorkouts} />
         </section>
 
         {!hasActivity && (

@@ -64,16 +64,29 @@ def update_profile(
 ):
     data = payload.model_dump(exclude_unset=True)
 
-    # "None" is exclusive. Selecting it means the user has no equipment.
+    # "No Equipment" is exclusive. Selecting it means the user has no equipment.
     if "equipment" in data and data["equipment"] is not None:
         equipment = [str(item).strip() for item in data["equipment"] if str(item).strip()]
-        if "None" in equipment:
-            equipment = ["None"]
-        data["equipment"] = list(dict.fromkeys(equipment))
+        normalized = []
+        seen = set()
+        for item in equipment:
+            value = "No Equipment" if item == "None" else item
+            if value == "No Equipment":
+                if "No Equipment" not in seen:
+                    seen.add("No Equipment")
+                    normalized = ["No Equipment"]
+                continue
+            if value not in seen:
+                seen.add(value)
+                normalized.append(value)
+        data["equipment"] = normalized
 
     effective_level = data.get("fitness_level", current_user.fitness_level)
     effective_equipment = data.get("equipment", current_user.equipment) or []
-    if effective_level in {"Intermediate", "Advanced"} and "None" in effective_equipment:
+    normalized_equipment = [str(item).strip() for item in effective_equipment if str(item).strip()]
+    if "None" in normalized_equipment:
+        normalized_equipment = ["No Equipment"]
+    if effective_level in {"Intermediate", "Advanced"} and "No Equipment" in normalized_equipment:
         raise HTTPException(status_code=422, detail="Intermediate and Advanced training require equipment.")
 
     for field, value in data.items():

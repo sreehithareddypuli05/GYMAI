@@ -38,11 +38,15 @@ const levels: { value: FitnessLevel; title: string; description: string }[] = [
 ]
 
 const equipmentOptions: { value: Equipment; title: string; description: string }[] = [
-  { value: 'None', title: 'No equipment', description: 'Train with your bodyweight.' },
-  { value: 'Dumbbell', title: 'Dumbbells', description: 'Free weights for versatile training.' },
+  { value: 'No Equipment', title: 'No equipment', description: 'Train with your bodyweight.' },
+  { value: 'Dumbbells', title: 'Dumbbells', description: 'Free weights for versatile training.' },
   { value: 'Barbell', title: 'Barbell', description: 'Barbell and plate-based training.' },
-  { value: 'Machine', title: 'Machines', description: 'Gym machines and guided resistance.' },
-  { value: 'Full Gym', title: 'Full gym', description: 'Access to a complete gym setup.' },
+  { value: 'Bench', title: 'Bench', description: 'Support for pressing and incline work.' },
+  { value: 'Resistance Bands', title: 'Resistance Bands', description: 'Portable tension for strength and rehab.' },
+  { value: 'Pull-up Bar', title: 'Pull-up Bar', description: 'Upper-body pulling and bodyweight work.' },
+  { value: 'Kettlebell', title: 'Kettlebell', description: 'Dynamic swings and presses.' },
+  { value: 'Treadmill', title: 'Treadmill', description: 'Cardio-focused conditioning and walking.' },
+  { value: 'Exercise Mat', title: 'Exercise Mat', description: 'Floor work, mobility and bodyweight drills.' },
 ]
 
 const frequencies = [
@@ -64,8 +68,64 @@ export default function Onboarding() {
   const [height, setHeight] = useState(user?.height_cm?.toString() ?? '')
   const [goal, setGoal] = useState<Goal | null>(user?.goal ?? null)
   const [level, setLevel] = useState<FitnessLevel | null>(user?.fitness_level ?? null)
+  const normalizeEquipment = (values: Array<string | Equipment | null | undefined> = []): Equipment[] => {
+    const normalized: Equipment[] = []
+    const seen = new Set<Equipment>()
+
+    const normalizeValue = (value: string): Equipment | null => {
+      switch (value) {
+        case 'No Equipment':
+        case 'None':
+          return 'No Equipment'
+        case 'Dumbbells':
+        case 'Dumbbell':
+          return 'Dumbbells'
+        case 'Barbell':
+          return 'Barbell'
+        case 'Bench':
+          return 'Bench'
+        case 'Resistance Bands':
+        case 'Bands':
+          return 'Resistance Bands'
+        case 'Pull-up Bar':
+          return 'Pull-up Bar'
+        case 'Kettlebell':
+          return 'Kettlebell'
+        case 'Treadmill':
+          return 'Treadmill'
+        case 'Exercise Mat':
+          return 'Exercise Mat'
+        default:
+          return null
+      }
+    }
+
+    for (const item of values) {
+      if (!item) continue
+      const mapped = normalizeValue(String(item).trim())
+      if (!mapped) continue
+
+      if (mapped === 'No Equipment') {
+        if (!seen.has('No Equipment')) {
+          seen.clear()
+          seen.add('No Equipment')
+          normalized.length = 0
+          normalized.push('No Equipment')
+        }
+        continue
+      }
+
+      if (!seen.has(mapped)) {
+        seen.add(mapped)
+        normalized.push(mapped)
+      }
+    }
+
+    return normalized
+  }
+
   const [equipment, setEquipment] = useState<Equipment[]>(
-    user?.equipment?.length ? user.equipment : [],
+    normalizeEquipment(user?.equipment ?? []),
   )
   const [frequency, setFrequency] = useState<number | null>(user?.training_frequency ?? null)
   const [saving, setSaving] = useState(false)
@@ -81,13 +141,13 @@ export default function Onboarding() {
   }, [step, age, weight, height, goal, level, equipment, frequency])
 
   const selectEquipment = (value: Equipment) => {
-    if (value === 'None') {
-      setEquipment(['None'])
+    if (value === 'No Equipment') {
+      setEquipment(['No Equipment'])
       return
     }
 
     setEquipment((current) => {
-      const withoutNone = current.filter((item) => item !== 'None')
+      const withoutNone = current.filter((item) => item !== 'No Equipment')
       return withoutNone.includes(value)
         ? withoutNone.filter((item) => item !== value)
         : [...withoutNone, value]
@@ -110,13 +170,15 @@ export default function Onboarding() {
 
     setSaving(true)
     try {
+      const normalizedEquipment: Equipment[] = equipment.includes('No Equipment') ? ['No Equipment'] : equipment
+
       const payload = {
         age: Number(age),
         weight_kg: Number(weight),
         height_cm: Number(height),
         goal,
         fitness_level: level,
-        equipment,
+        equipment: normalizedEquipment,
         training_frequency: frequency,
       }
 

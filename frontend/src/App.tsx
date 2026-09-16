@@ -13,6 +13,7 @@ import Workout from '@/pages/Workout'
 import Exercises from '@/pages/Exercises'
 import ProgressPage from '@/pages/Progress'
 import History from '@/pages/History'
+import Marathons from '@/pages/Marathons'
 import Profile from '@/pages/Profile'
 import Settings from '@/pages/Settings'
 import NotFound from '@/pages/NotFound'
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+            <Route path="/marathons" element={<ProtectedRoute><Marathons /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute allowIncomplete><Profile /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 

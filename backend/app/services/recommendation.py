@@ -28,14 +28,45 @@ FOCUS = {
 }
 
 
+EQUIPMENT_ALIASES = {
+    'No Equipment': {'None'},
+    'None': {'None'},
+    'Dumbbells': {'Dumbbell'},
+    'Dumbbell': {'Dumbbell'},
+    'Barbell': {'Barbell'},
+    'Resistance Bands': {'Bands', 'Band', 'Band(s)'},
+    'Bands': {'Bands', 'Band', 'Band(s)'},
+    'Bench': {'Bench'},
+    'Pull-up Bar': {'Pull-up Bar', 'Pull Up Bar'},
+    'Kettlebell': {'Kettlebell'},
+    'Treadmill': {'Treadmill'},
+    'Exercise Mat': {'Exercise Mat', 'Mat'},
+    'Full Gym': {'Dumbbell', 'Barbell', 'Cable', 'Machine', 'Kettlebell', 'Bands', 'Bench', 'Pull-up Bar', 'Treadmill', 'Exercise Mat'},
+}
+
+
+def _normalize_equipment_values(equipment: list[str]) -> set[str]:
+    values: set[str] = set()
+    for item in equipment or []:
+        key = str(item).strip()
+        if not key:
+            continue
+        values.update(EQUIPMENT_ALIASES.get(key, {key}))
+    return values
+
+
 def _equipment_allowed(exercise: models.Exercise, equipment: list[str]) -> bool:
     if not equipment:
         return False
-    if 'None' in equipment:
+
+    canonical_values = [str(item).strip() for item in equipment if str(item).strip()]
+    allowed = _normalize_equipment_values(canonical_values)
+
+    if 'No Equipment' in canonical_values or 'None' in canonical_values:
         return exercise.equipment == 'None'
-    if 'Full Gym' in equipment:
+    if 'Full Gym' in canonical_values:
         return exercise.equipment != 'None'
-    return exercise.equipment in set(equipment)
+    return exercise.equipment in allowed
 
 
 def build_recommendation(db: Session, user: models.User) -> RecommendationResult | None:
@@ -45,7 +76,8 @@ def build_recommendation(db: Session, user: models.User) -> RecommendationResult
     # Age/weight remain part of the user's training profile, but are not used
     # to rank or judge bodies. Exercise selection is driven by goal, level,
     # equipment and sustainable training frequency.
-    if user.fitness_level in {'Intermediate', 'Advanced'} and 'None' in user.equipment:
+    normalized_equipment = [str(item).strip() for item in user.equipment if str(item).strip()]
+    if user.fitness_level in {'Intermediate', 'Advanced'} and ('None' in normalized_equipment or 'No Equipment' in normalized_equipment):
         return None
 
     rows = db.execute(select(models.Exercise)).scalars().all()
@@ -55,10 +87,7 @@ def build_recommendation(db: Session, user: models.User) -> RecommendationResult
     ]
 
     if not usable:
-        usable = [
-            row for row in rows
-            if row.difficulty == user.fitness_level and _equipment_allowed(row, user.equipment)
-        ]
+        return None
 
     preferred = GOAL_MUSCLES.get(user.goal, GOAL_MUSCLES['General Fitness'])
 

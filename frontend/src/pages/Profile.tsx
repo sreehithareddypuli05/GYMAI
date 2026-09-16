@@ -12,7 +12,7 @@ import type { Equipment, FitnessLevel, Goal } from '@/types'
 
 const goals: Goal[] = ['Build Muscle', 'Lose Fat', 'Gain Strength', 'Improve Endurance', 'General Fitness']
 const levels: FitnessLevel[] = ['Beginner', 'Intermediate', 'Advanced']
-const equipmentOptions: Equipment[] = ['None', 'Dumbbell', 'Barbell', 'Machine', 'Full Gym', 'Cable', 'Kettlebell', 'Bands']
+const equipmentOptions: Exclude<Equipment, 'None'>[] = ['No Equipment', 'Dumbbells', 'Barbell', 'Bench', 'Resistance Bands', 'Pull-up Bar', 'Kettlebell', 'Treadmill', 'Exercise Mat']
 const frequencyOptions = [
   { value: 2, label: '1–2 days', helper: 'Flexible' },
   { value: 4, label: '3–4 days', helper: 'Balanced' },
@@ -47,6 +47,62 @@ export default function Profile() {
   const [equipment, setEquipment] = useState<Equipment[]>(user?.equipment ?? [])
   const [frequency, setFrequency] = useState<number | null>(user?.training_frequency ?? null)
 
+  const normalizeEquipment = (values: Array<string | Equipment | null | undefined> = []): Equipment[] => {
+    const normalized: Equipment[] = []
+    const seen = new Set<Equipment>()
+
+    const normalizeValue = (value: string): Equipment | null => {
+      switch (value) {
+        case 'No Equipment':
+        case 'None':
+          return 'No Equipment'
+        case 'Dumbbells':
+        case 'Dumbbell':
+          return 'Dumbbells'
+        case 'Barbell':
+          return 'Barbell'
+        case 'Bench':
+          return 'Bench'
+        case 'Resistance Bands':
+        case 'Bands':
+          return 'Resistance Bands'
+        case 'Pull-up Bar':
+          return 'Pull-up Bar'
+        case 'Kettlebell':
+          return 'Kettlebell'
+        case 'Treadmill':
+          return 'Treadmill'
+        case 'Exercise Mat':
+          return 'Exercise Mat'
+        default:
+          return null
+      }
+    }
+
+    for (const item of values) {
+      if (!item) continue
+      const mapped = normalizeValue(String(item).trim())
+      if (!mapped) continue
+
+      if (mapped === 'No Equipment') {
+        if (!seen.has('No Equipment')) {
+          seen.clear()
+          seen.add('No Equipment')
+          normalized.length = 0
+          normalized.push('No Equipment')
+        }
+        continue
+      }
+
+      if (!seen.has(mapped)) {
+        seen.add(mapped)
+        normalized.push(mapped)
+      }
+    }
+
+    return normalized
+  }
+
   useEffect(() => {
     if (!user) return
     setFullName(user.full_name)
@@ -56,13 +112,13 @@ export default function Profile() {
     setWeight(user.weight_kg?.toString() ?? '')
     setGoal(user.goal ?? null)
     setLevel(user.fitness_level ?? null)
-    setEquipment(user.equipment ?? [])
+    setEquipment(normalizeEquipment(user.equipment ?? []))
     setFrequency(user.training_frequency ?? null)
   }, [user])
 
   const fields = [fullName.trim().length > 1, age, height, weight, goal, level, equipment.length > 0, frequency]
   const completion = useMemo(() => Math.round((fields.filter(Boolean).length / fields.length) * 100), [fullName, age, height, weight, goal, level, equipment, frequency])
-  const equipmentCompatible = level === 'Beginner' ? equipment.length > 0 : equipment.length > 0 && !equipment.includes('None')
+  const equipmentCompatible = level === 'Beginner' ? equipment.length > 0 : equipment.length > 0 && !equipment.includes('No Equipment')
   const valid = fields.every(Boolean) && Number(age) >= 13 && Number(height) >= 50 && Number(weight) >= 20 && equipmentCompatible
 
   const questions = [
@@ -90,9 +146,9 @@ export default function Profile() {
   ][step]
 
   const selectEquipment = (item: Equipment) => {
-    if (item === 'None') return setEquipment(['None'])
+    if (item === 'No Equipment') return setEquipment(['No Equipment'])
     setEquipment(current => {
-      const withoutNone = current.filter(value => value !== 'None')
+      const withoutNone = current.filter(value => value !== 'No Equipment')
       return withoutNone.includes(item) ? withoutNone.filter(value => value !== item) : [...withoutNone, item]
     })
   }
@@ -126,11 +182,14 @@ export default function Profile() {
     if (!user || !valid || !goal || !level || !frequency || !equipmentCompatible) {
       showToast('Please complete every question first.', 'error'); return
     }
+
+    const normalizedEquipment: Equipment[] = equipment.includes('No Equipment') ? ['No Equipment'] : equipment
+
     setSaving(true)
     try {
       const response = await updateProfile({
         age: Number(age), height_cm: Number(height), weight_kg: Number(weight),
-        goal, fitness_level: level, equipment, training_frequency: frequency,
+        goal, fitness_level: level, equipment: normalizedEquipment, training_frequency: frequency,
       })
       const updated = await updateUser({
         full_name: fullName.trim(), avatar_url: avatarUrl,
@@ -183,7 +242,7 @@ export default function Profile() {
                 <InfoCard icon={<Scale size={17} />} label="Weight" value={weight ? `${weight} kg` : 'Not set'} />
                 <InfoCard icon={<Ruler size={17} />} label="Height" value={height ? `${height} cm` : 'Not set'} />
                 <InfoCard icon={<Timer size={17} />} label="Frequency" value={frequency ? `${frequency} days/week` : 'Not set'} />
-                <InfoCard icon={<Dumbbell size={17} />} label="Equipment" value={equipment.length ? equipment.map(item => item === 'None' ? 'No equipment' : item).join(', ') : 'Not set'} />
+                <InfoCard icon={<Dumbbell size={17} />} label="Equipment" value={equipment.length ? equipment.map(item => item === 'No Equipment' ? 'No equipment' : item).join(', ') : 'Not set'} />
               </div>
             </div>
           ) : (
@@ -219,7 +278,7 @@ export default function Profile() {
                   {step === 4 && <Input autoFocus label="Weight (kg)" type="number" min={20} max={500} step="0.1" value={weight} onChange={e => setWeight(e.target.value)} placeholder="e.g. 65" />}
                   {step === 5 && <ChoiceGrid items={goals} selected={goal} onSelect={setGoal} />}
                   {step === 6 && <ChoiceGrid items={levels} selected={level} onSelect={setLevel} />}
-                  {step === 7 && <div><div className="grid gap-3 sm:grid-cols-2">{equipmentOptions.map(item => <Choice key={item} selected={equipment.includes(item)} onClick={() => selectEquipment(item)}>{item === 'None' ? 'No Equipment' : item}</Choice>)}</div>{level && level !== 'Beginner' && <p className="mt-3 text-xs text-ink-faint">Intermediate and Advanced plans require at least one equipment option.</p>}</div>}
+                  {step === 7 && <div><div className="grid gap-3 sm:grid-cols-2">{equipmentOptions.map(item => <Choice key={item} selected={equipment.includes(item)} onClick={() => selectEquipment(item)}>{item === 'No Equipment' ? 'No Equipment' : item}</Choice>)}</div>{level && level !== 'Beginner' && <p className="mt-3 text-xs text-ink-faint">Intermediate and Advanced plans require at least one equipment option.</p>}</div>}
                   {step === 8 && <ChoiceGrid items={frequencyOptions.map(item => item.label)} selected={frequencyOptions.find(item => item.value === frequency)?.label ?? null} onSelect={label => setFrequency(frequencyOptions.find(item => item.label === label)?.value ?? null)} />}
                 </motion.div>
               </AnimatePresence>

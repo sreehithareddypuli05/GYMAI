@@ -254,18 +254,84 @@ class ActivityPoint(BaseModel):
 
 class DashboardOut(BaseModel):
     current_streak: int
-
     longest_streak: int
-
     workouts_this_week: int
-
     total_workouts: int
-
     minutes_this_week: int
-
     activity: list[ActivityPoint]
-
     recent_workouts: list[WorkoutSessionOut]
+
+
+# --------------------------------
+# Marathon events
+# --------------------------------
+
+class MarathonEventBase(BaseModel):
+    name: str = Field(min_length=1, max_length=160)
+    description: str = Field(min_length=1, max_length=1000)
+    location: str = Field(min_length=1, max_length=200)
+    event_date: datetime
+    distance: str = Field(min_length=1, max_length=50)
+    registration_deadline: datetime | None = None
+    registration_url: str | None = None
+    image_url: str | None = None
+
+
+class MarathonEventCreate(MarathonEventBase):
+    pass
+
+
+class MarathonEventUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=160)
+    description: str | None = Field(default=None, min_length=1, max_length=1000)
+    location: str | None = Field(default=None, min_length=1, max_length=200)
+    event_date: datetime | None = None
+    distance: str | None = Field(default=None, min_length=1, max_length=50)
+    registration_deadline: datetime | None = None
+    registration_url: str | None = None
+    image_url: str | None = None
+
+
+class MarathonEventOut(MarathonEventBase):
+    id: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class MarathonReminderBase(BaseModel):
+    status: str = "active"
+
+
+class MarathonReminderCreate(MarathonReminderBase):
+    pass
+
+
+class MarathonReminderOut(BaseModel):
+    id: str
+    user_id: str
+    marathon_id: str
+    status: str
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NotificationOut(BaseModel):
+    id: str
+    user_id: str
+    marathon_id: str | None = None
+    title: str
+    message: str
+    notification_type: str
+    is_read: bool
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class NotificationMarkRead(BaseModel):
+    is_read: bool = True
 
 
 # --------------------------------
