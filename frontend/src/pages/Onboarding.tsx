@@ -22,6 +22,7 @@ import { updateProfile } from '@/services/profileService'
 import type { Equipment, FitnessLevel, Goal } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 const goals: { value: Goal; title: string; description: string; icon: typeof Target }[] = [
   { value: 'Lose Fat', title: 'Lose fat', description: 'Build consistency and improve conditioning.', icon: Flame },
@@ -174,7 +175,7 @@ export default function Onboarding() {
           >
             Gym<span className="text-emerald">AI</span>
           </button>
-          <span className="text-xs font-medium text-ink-faint">Training profile</span>
+          <div className="flex items-center gap-3"><LanguageSwitcher /><span className="text-xs font-medium text-ink-faint">Training profile</span></div>
         </header>
 
         <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center py-10">

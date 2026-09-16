@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const KEY = 'gymai_theme'
 
@@ -11,6 +12,7 @@ function applyTheme(theme: 'light' | 'dark') {
 }
 
 export function ThemeToggle() {
+  const { t } = useTranslation()
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem(KEY)
     return saved === 'light' ? 'light' : 'dark'
@@ -26,7 +28,7 @@ export function ThemeToggle() {
 
   const light = theme === 'light'
   return (
-    <button type="button" onClick={toggle} aria-label={`Switch to ${light ? 'dark' : 'light'} mode`} title={`Switch to ${light ? 'dark' : 'light'} mode`} className="theme-toggle inline-flex h-9 w-9 items-center justify-center rounded-xl border border-surface-borderStrong bg-surface/70 text-ink transition hover:border-orange/50 hover:text-orange">
+    <button type="button" onClick={toggle} aria-label={light ? t('ui.switchToDark') : t('ui.switchToLight')} title={light ? t('ui.switchToDark') : t('ui.switchToLight')} className="theme-toggle inline-flex h-9 w-9 items-center justify-center rounded-xl border border-surface-borderStrong bg-surface/70 text-ink transition hover:border-orange/50 hover:text-orange">
       {light ? <Moon size={16} /> : <Sun size={16} />}
     </button>
   )

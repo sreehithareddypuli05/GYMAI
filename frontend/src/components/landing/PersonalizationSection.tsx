@@ -1,28 +1,27 @@
 import { useState } from 'react'
 import { ScrollReveal } from './effects'
-
-const goals = ['Build Muscle', 'Lose Fat', 'Gain Strength', 'Endurance'] as const
-const experience = ['Beginner', 'Intermediate', 'Advanced'] as const
+import { useLandingContent } from '@/data/landingContent'
 
 export function PersonalizationSection() {
-  const [goal, setGoal] = useState<(typeof goals)[number]>('Build Muscle')
-  const [level, setLevel] = useState<(typeof experience)[number]>('Intermediate')
+  const [goal, setGoal] = useState('Build Muscle')
+  const [level, setLevel] = useState('Intermediate')
+  const copy = useLandingContent()
 
   return (
     <section className="py-20 sm:py-28 border-t border-surface-border">
       <div className="container-shell">
         <ScrollReveal>
-          <p className="label-eyebrow mb-3">Personal training</p>
+          <p className="label-eyebrow mb-3">{copy.personalLabel}</p>
           <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl leading-tight mb-4">
-            A plan shaped around the way you train
+            {copy.personalTitle}
           </h2>
           <p className="text-ink-muted leading-relaxed mb-8 max-w-2xl">
-            Choose the outcome you want and the experience you bring. GymAI uses those signals to guide exercise selection, training volume, recovery and progression without forcing you into a one-size-fits-all routine.
+            {copy.personalBody}
           </p>
 
-          <p className="text-xs uppercase tracking-wide text-ink-faint mb-2.5">Goal</p>
+          <p className="text-xs uppercase tracking-wide text-ink-faint mb-2.5">{copy.goal}</p>
           <div className="flex flex-wrap gap-2 mb-6">
-            {goals.map((g) => (
+            {copy.goals.map((g) => (
               <button
                 key={g}
                 onClick={() => setGoal(g)}
@@ -37,9 +36,9 @@ export function PersonalizationSection() {
             ))}
           </div>
 
-          <p className="text-xs uppercase tracking-wide text-ink-faint mb-2.5">Experience</p>
+          <p className="text-xs uppercase tracking-wide text-ink-faint mb-2.5">{copy.experience}</p>
           <div className="flex flex-wrap gap-2">
-            {experience.map((l) => (
+            {copy.levels.map((l) => (
               <button
                 key={l}
                 onClick={() => setLevel(l)}

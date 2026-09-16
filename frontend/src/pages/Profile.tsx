@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, Check, ChevronLeft, ChevronRight, Dumbbell, Gauge, Ruler, Scale, Target, Timer, UserRound, Sparkles } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
@@ -61,7 +61,7 @@ export default function Profile() {
   }, [user])
 
   const fields = [fullName.trim().length > 1, age, height, weight, goal, level, equipment.length > 0, frequency]
-  const completion = useMemo(() => Math.round((fields.filter(Boolean).length / fields.length) * 100), [fullName, age, height, weight, goal, level, equipment, frequency])
+  const completion = Math.round((fields.filter(Boolean).length / fields.length) * 100)
   const equipmentCompatible = level === 'Beginner' ? equipment.length > 0 : equipment.length > 0 && !equipment.includes('None')
   const valid = fields.every(Boolean) && Number(age) >= 13 && Number(height) >= 50 && Number(weight) >= 20 && equipmentCompatible
 

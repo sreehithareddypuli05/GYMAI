@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom'
 import { Activity } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-charcoal px-6 text-center">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-charcoal px-6 text-center">
+      <div className="absolute right-5 top-5">
+        <LanguageSwitcher />
+      </div>
       <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald/10 text-emerald mb-6">
         <Activity size={22} />
       </div>

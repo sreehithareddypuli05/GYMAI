@@ -1,16 +1,19 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, Dumbbell, Library, TrendingUp, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 const nav = [
-  { to: '/dashboard', label: 'Home', icon: LayoutDashboard },
-  { to: '/workout', label: 'Workout', icon: Dumbbell },
-  { to: '/exercises', label: 'Library', icon: Library },
-  { to: '/progress', label: 'Progress', icon: TrendingUp },
-  { to: '/profile', label: 'Profile', icon: User },
+  { to: '/dashboard', label: 'home', icon: LayoutDashboard },
+  { to: '/workout', label: 'workout', icon: Dumbbell },
+  { to: '/exercises', label: 'exercises', icon: Library },
+  { to: '/progress', label: 'progress', icon: TrendingUp },
+  { to: '/profile', label: 'profile', icon: User },
 ]
 
 export function MobileNav() {
+  const { t } = useTranslation()
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-surface-border bg-surface  px-2 py-2 lg:hidden">
       {nav.map(({ to, label, icon: Icon }) => (
@@ -25,7 +28,7 @@ export function MobileNav() {
           }
         >
           <Icon size={19} />
-          {label}
+          {t(`nav.${label}`)}
         </NavLink>
       ))}
     </nav>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { useToast } from '@/context/ToastContext'
 import { resetPasswordWithCode } from '@/services/authService'
+import { useTranslation } from 'react-i18next'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const { t } = useTranslation()
 
   useEffect(() => {
     const savedEmail = sessionStorage.getItem('gymai_reset_email') || ''
@@ -51,22 +53,22 @@ export default function ResetPassword() {
       {success ? (
         <div className="space-y-5 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-orange/20 bg-orange/10 text-orange"><CheckCircle2 size={28} /></div>
-          <div><p className="font-semibold text-ink">Your password has been changed.</p><p className="mt-1 text-sm text-ink-muted">Use your new password the next time you sign in.</p></div>
-          <Link to="/login" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange px-4 py-3 text-sm font-semibold text-white hover:bg-orange-dark"><ArrowLeft size={16} /> Back to login</Link>
+          <div><p className="font-semibold text-ink">{t('ui.passwordChanged')}</p><p className="mt-1 text-sm text-ink-muted">{t('ui.useNewPassword')}</p></div>
+          <Link to="/login" className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange px-4 py-3 text-sm font-semibold text-white hover:bg-orange-dark"><ArrowLeft size={16} /> {t('ui.backToLogin')}</Link>
         </div>
       ) : (
         <form onSubmit={reset} className="space-y-4" noValidate>
           <div className="rounded-xl border border-surface-border bg-surface/70 px-4 py-3 text-sm text-ink-muted">
-            <div className="flex items-center gap-2 font-medium text-ink"><LockKeyhole size={16} className="text-orange" /> Verification complete</div>
-            <p className="mt-1 text-xs">Set a new password for <span className="text-ink">{email}</span>.</p>
+            <div className="flex items-center gap-2 font-medium text-ink"><LockKeyhole size={16} className="text-orange" /> {t('ui.verificationComplete')}</div>
+            <p className="mt-1 text-xs">{t('ui.setNewPasswordFor')} <span className="text-ink">{email}</span>.</p>
           </div>
-          <PasswordInput label="New password" autoComplete="new-password" placeholder="At least 6 characters" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-          <PasswordInput label="Confirm new password" autoComplete="new-password" placeholder="Re-enter your new password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-          {mismatch && <p className="text-xs text-danger">Passwords do not match.</p>}
+          <PasswordInput label={t('authText.New password')} autoComplete="new-password" placeholder={t('ui.passwordPlaceholder')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          <PasswordInput label={t('ui.confirmPassword')} autoComplete="new-password" placeholder={t('ui.confirmPasswordPlaceholder')} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          {mismatch && <p className="text-xs text-danger">{t('ui.passwordsMismatch')}</p>}
           <Button type="submit" disabled={newPassword.length < 6 || mismatch || loading} className="w-full">
-            {loading ? 'Changing password…' : 'Change password'}
+            {loading ? t('ui.changingPassword') : t('ui.changePassword')}
           </Button>
-          <Link to="/login" className="inline-flex w-full items-center justify-center gap-2 text-xs text-ink-faint hover:text-ink"><ArrowLeft size={14} /> Cancel</Link>
+          <Link to="/login" className="inline-flex w-full items-center justify-center gap-2 text-xs text-ink-faint hover:text-ink"><ArrowLeft size={14} /> {t('ui.cancel')}</Link>
         </form>
       )}
     </AuthLayout>

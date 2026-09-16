@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Brain, Camera, Dumbbell, MessagesSquare, Repeat, ScanLine, Sparkles, Target, Wrench, ArrowUpRight } from 'lucide-react'
 import { ScrollReveal } from './effects'
 import { GymImageField } from './GymImageField'
+import { useLandingContent } from '@/data/landingContent'
 
 const capabilities = [
   { icon: Brain, title: 'Smart workout planning', body: 'Build focused sessions from your goal, equipment, recent training and preferred pace.', tag: 'PLAN' },
@@ -13,6 +14,7 @@ const capabilities = [
 ]
 
 export function FutureAISection() {
+  const copy = useLandingContent()
   return (
     <section id="ai-features" className="ai-feature-section relative overflow-hidden border-t border-white/10 py-24 sm:py-32">
       <GymImageField />
@@ -20,19 +22,19 @@ export function FutureAISection() {
       <div className="container-shell relative z-10">
         <ScrollReveal className="mb-14 max-w-3xl">
           <div className="mb-4 flex items-center gap-3">
-            <p className="label-eyebrow">AI training core</p>
-            <span className="orange-pill"><Sparkles size={11} /> SMART TRAINING</span>
+            <p className="label-eyebrow">{copy.aiLabel}</p>
+            <span className="orange-pill"><Sparkles size={11} /> {copy.smartTraining}</span>
           </div>
-          <h2 className="cinematic-heading">TRAINING<br /><span>THAT MOVES WITH YOU.</span></h2>
+          <h2 className="cinematic-heading">{copy.aiTitle}</h2>
           <p className="mt-6 max-w-2xl text-base leading-7 text-ink-muted sm:text-lg">
-            Your goals, movement, equipment and training history work together inside one focused training system, helping each session feel more relevant than the last.
+            {copy.aiBody}
           </p>
         </ScrollReveal>
 
         <div className="feature-rail">
-          {capabilities.map((c, i) => (
+          {copy.capabilities.map(([title, body, tag], i) => { const c = capabilities[i]; return (
             <motion.article
-              key={c.title}
+              key={title}
               className="ai-feature-card"
               initial={{ opacity: 0, y: 45, rotateX: 8 }}
               whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -40,13 +42,13 @@ export function FutureAISection() {
               transition={{ duration: .65, delay: i * .06, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ y: -10, rotateX: -2, rotateY: i % 2 ? 1 : -1 }}
             >
-              <div className="feature-card-top"><span className="text-[#ff5a00]">CORE</span><ArrowUpRight size={17} /></div>
+              <div className="feature-card-top"><span className="text-[#ff5a00]">{copy.core}</span><ArrowUpRight size={17} /></div>
               <div className="feature-icon"><c.icon size={22} /></div>
-              <h3>{c.title}</h3>
-              <p>{c.body}</p>
-              <div className="feature-card-bottom"><span>{c.tag}</span><i /></div>
+              <h3>{title}</h3>
+              <p>{body}</p>
+              <div className="feature-card-bottom"><span>{tag}</span><i /></div>
             </motion.article>
-          ))}
+          )})}
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
+import { useTranslation } from 'react-i18next'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -15,6 +16,7 @@ export default function Login() {
   const { login, error, clearError } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const isValid = email.trim().length > 3 && email.includes('@') && password.length >= 6
 
@@ -25,7 +27,7 @@ export default function Login() {
     clearError()
     try {
       await login(email, password)
-      showToast('Welcome back.', 'success')
+      showToast(t('ui.welcomeBack'), 'success')
       navigate('/dashboard')
     } catch {
       // error surfaced via context
@@ -42,17 +44,17 @@ export default function Login() {
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <Input
-          label="Email"
+          label={t('ui.email')}
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t('ui.emailPlaceholder')}
           icon={<Mail size={16} />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <PasswordInput
-          label="Password"
+          label={t('ui.password')}
           name="password"
           autoComplete="current-password"
           placeholder="••••••••"
@@ -60,7 +62,7 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="-mt-1 flex justify-end">
-          <Link to="/forgot-password" className="text-xs font-medium text-orange hover:text-orange-light">Forgot password?</Link>
+          <Link to="/forgot-password" className="text-xs font-medium text-orange hover:text-orange-light">{t('ui.forgotPassword')}</Link>
         </div>
 
         {error && (
@@ -69,13 +71,13 @@ export default function Login() {
           </p>
         )}
 
-        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? 'Signing in…' : 'Log in'}</Button>
+        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? t('ui.signingIn') : t('ui.logIn')}</Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-faint">
-        New to GymAI?{' '}
+        {t('ui.newToGymAI')}{' '}
         <Link to="/register" className="text-orange hover:text-orange-light font-medium transition-colors">
-          Create an account
+          {t('ui.createAccount')}
         </Link>
       </p>
     </AuthLayout>

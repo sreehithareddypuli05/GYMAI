@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Quote } from 'lucide-react'
+import { useLandingContent } from '@/data/landingContent'
 
 const stories = [
   { name: 'ARJUN K.', role: 'STRENGTH / 24', quote: 'My sessions finally feel purposeful. I know what to train, how to approach it and what to work on next.', image: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?auto=format&fit=crop&w=900&q=88', stat: '+18%', statLabel: 'STRENGTH' },
@@ -16,12 +17,13 @@ const stories = [
 export function TestimonialsSection() {
   const [index, setIndex] = useState(0)
   const story = stories[index]
+  const copy = useLandingContent()
   const go = (dir: number) => setIndex((index + dir + stories.length) % stories.length)
 
   return (
     <section id="testimonials" className="testimonials-section relative overflow-hidden border-t border-white/10 py-24 sm:py-32">
       <div className="container-shell">
-        <div className="testimonial-heading"><div><p className="label-eyebrow">Athlete stories</p><h2 className="cinematic-heading mt-5">REAL WORK.<br /><span>REAL PROGRESS.</span></h2></div><p>See how different training goals become easier to follow when every session has a clear purpose, useful feedback and visible momentum.</p></div>
+        <div className="testimonial-heading"><div><p className="label-eyebrow">{copy.testimonialsLabel}</p><h2 className="cinematic-heading mt-5">{copy.testimonialsTitle}</h2></div><p>{copy.testimonialsBody}</p></div>
 
         <div className="testimonial-stage">
           <div className="testimonial-orb" />
@@ -37,8 +39,8 @@ export function TestimonialsSection() {
               )
             })}
           </div>
-          <button className="carousel-arrow carousel-left" onClick={() => go(-1)} aria-label="Previous testimonial"><ArrowLeft size={18} /></button>
-          <button className="carousel-arrow carousel-right" onClick={() => go(1)} aria-label="Next testimonial"><ArrowRight size={18} /></button>
+          <button className="carousel-arrow carousel-left" onClick={() => go(-1)} aria-label={copy.previous}><ArrowLeft size={18} /></button>
+          <button className="carousel-arrow carousel-right" onClick={() => go(1)} aria-label={copy.next}><ArrowRight size={18} /></button>
           <div className="carousel-dots">{stories.map((s, i) => <button key={s.name} aria-label={`Show testimonial ${i + 1}`} className={i === index ? 'active' : ''} onClick={() => setIndex(i)} />)}</div>
         </div>
       </div>

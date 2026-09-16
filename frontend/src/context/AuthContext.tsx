@@ -84,13 +84,10 @@ export function AuthProvider({
     }
   }, [saveUser])
 
-  const persist = (
-    token: string,
-    u: User,
-  ) => {
+  const persist = useCallback((token: string, u: User) => {
     localStorage.setItem(TOKEN_KEY, token)
     saveUser(u)
-  }
+  }, [saveUser])
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -108,7 +105,7 @@ export function AuthProvider({
         throw err
       }
     },
-    [],
+    [persist],
   )
 
   const register = useCallback(
@@ -136,7 +133,7 @@ export function AuthProvider({
         throw err
       }
     },
-    [],
+    [persist],
   )
 
   const updateUser = useCallback(

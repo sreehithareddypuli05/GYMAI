@@ -3,17 +3,21 @@ import { Activity, Dumbbell, History, LayoutDashboard, Library, TrendingUp, User
 import { cn } from '@/lib/utils'
 import { UserMenu } from './UserMenu'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
+import { useTranslation } from 'react-i18next'
 
 const nav = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/workout', label: 'Workout', icon: Dumbbell },
-  { to: '/exercises', label: 'Exercises', icon: Library },
-  { to: '/progress', label: 'Progress', icon: TrendingUp },
-  { to: '/history', label: 'History', icon: History },
-  { to: '/profile', label: 'Profile', icon: User },
+  { to: '/dashboard', label: 'dashboard', icon: LayoutDashboard },
+  { to: '/workout', label: 'workout', icon: Dumbbell },
+  { to: '/exercises', label: 'exercises', icon: Library },
+  { to: '/progress', label: 'progress', icon: TrendingUp },
+  { to: '/history', label: 'history', icon: History },
+  { to: '/profile', label: 'profile', icon: User },
 ]
 
 export function Navbar() {
+  const { t } = useTranslation()
+
   return (
     <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-6xl -translate-x-1/2">
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-surface-borderStrong bg-charcoal px-3 py-2 shadow-card ">
@@ -39,12 +43,12 @@ export function Navbar() {
               }
             >
               <Icon size={14} />
-              {label}
+              {t(`nav.${label}`)}
             </NavLink>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2"><ThemeToggle /><UserMenu /></div>
+        <div className="flex items-center gap-2"><LanguageSwitcher /><ThemeToggle /><UserMenu /></div>
       </div>
     </header>
   )

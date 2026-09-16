@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Play, VolumeX } from 'lucide-react'
+import { useLandingContent } from '@/data/landingContent'
 
 const videos = [
   { src: '/videos/gym-training-wide.mp4', label: 'MOVEMENT / STRENGTH FLOOR' },
@@ -10,6 +11,7 @@ const videos = [
 export function HeroVideoStage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [index, setIndex] = useState(0)
+  const copy = useLandingContent()
 
   useEffect(() => {
     const video = videoRef.current
@@ -43,8 +45,8 @@ export function HeroVideoStage() {
         </AnimatePresence>
         <div className="hero-video-shade" />
         <div className="hero-video-scan" />
-        <div className="hero-video-label"><span>{videos[index].label}</span><b>GYMAI TRAINING</b></div>
-        <div className="hero-video-badge"><Play size={11} fill="currentColor" /><span>CINEMATIC TRAINING</span><VolumeX size={12} /></div>
+        <div className="hero-video-label"><span>{copy.videoLabels[index]}</span><b>{copy.training}</b></div>
+        <div className="hero-video-badge"><Play size={11} fill="currentColor" /><span>{copy.cinematic}</span><VolumeX size={12} /></div>
         <div className="hero-video-progress" aria-hidden="true"><i style={{ width: `${((index + 1) / videos.length) * 100}%` }} /></div>
       </div>
     </div>

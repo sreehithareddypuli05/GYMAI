@@ -1,6 +1,7 @@
 import { forwardRef, useState, type InputHTMLAttributes } from 'react'
 import { Eye, EyeOff, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -11,6 +12,7 @@ interface PasswordInputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   ({ label, error, hint, className, id, ...props }, ref) => {
     const [visible, setVisible] = useState(false)
+    const { t } = useTranslation()
     const inputId = id || props.name
 
     return (
@@ -41,7 +43,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             type="button"
             onClick={() => setVisible((v) => !v)}
             className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink transition-colors"
-            aria-label={visible ? 'Hide password' : 'Show password'}
+            aria-label={visible ? t('ui.hidePassword') : t('ui.showPassword')}
             tabIndex={-1}
           >
             {visible ? <EyeOff size={16} /> : <Eye size={16} />}

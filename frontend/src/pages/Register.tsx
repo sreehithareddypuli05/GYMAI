@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
+import { useTranslation } from 'react-i18next'
 
 export default function Register() {
   const [fullName, setFullName] = useState('')
@@ -16,6 +17,7 @@ export default function Register() {
   const { register, error, clearError } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const isValid =
     fullName.trim().length > 1 && email.trim().length > 3 && email.includes('@') && password.length >= 6
@@ -27,7 +29,7 @@ export default function Register() {
     clearError()
     try {
       await register(fullName, email, password)
-      showToast('Account created — welcome to GymAI.', 'success')
+      showToast(t('ui.accountCreated'), 'success')
       navigate('/dashboard')
     } catch {
       // error surfaced via context
@@ -44,30 +46,30 @@ export default function Register() {
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <Input
-          label="Full name"
+          label={t('ui.fullName')}
           name="name"
           autoComplete="name"
-          placeholder="Alex Rivera"
+          placeholder={t('ui.fullName')}
           icon={<User size={16} />}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
         <Input
-          label="Email"
+          label={t('ui.email')}
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder={t('ui.emailPlaceholder')}
           icon={<Mail size={16} />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <PasswordInput
-          label="Password"
+          label={t('ui.password')}
           name="password"
           autoComplete="new-password"
-          placeholder="At least 6 characters"
-          hint="Use at least 6 characters."
+          placeholder={t('ui.passwordPlaceholder')}
+          hint={t('ui.passwordPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -78,13 +80,13 @@ export default function Register() {
           </p>
         )}
 
-        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? 'Creating account…' : 'Create account'}</Button>
+        <Button type="submit" disabled={!isValid || loading} className="w-full">{loading ? t('ui.creatingAccount') : t('ui.createAccount')}</Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-ink-faint">
-        Already have an account?{' '}
+        {t('ui.alreadyHaveAccount')}{' '}
         <Link to="/login" className="text-orange hover:text-orange-light font-medium transition-colors">
-          Log in
+          {t('ui.logIn')}
         </Link>
       </p>
     </AuthLayout>

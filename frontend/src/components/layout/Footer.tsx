@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Activity } from 'lucide-react'
+import { useLandingContent } from '@/data/landingContent'
 
 const columns = [
   {
@@ -28,6 +29,12 @@ const columns = [
 ]
 
 export function Footer() {
+  const copy = useLandingContent()
+  const localizedColumns = [
+    { title: copy.product, links: [{ label: copy.trainingIntelligence, to: '/#intelligence' }, { label: copy.libraryLabel, to: '/#training' }, { label: copy.progressAnalytics, to: '/#progress' }] },
+    { title: copy.company, links: [{ label: copy.about, to: '/' }, { label: copy.careers, to: '/' }, { label: copy.contact, to: '/' }] },
+    { title: copy.account, links: [{ label: copy.logIn, to: '/login' }, { label: copy.createAccount, to: '/register' }] },
+  ]
   return (
     <footer className="border-t border-surface-border bg-surface">
       <div className="container-shell py-14">
@@ -40,10 +47,10 @@ export function Footer() {
               <span className="font-display text-base font-semibold text-ink">GymAI</span>
             </Link>
             <p className="mt-3 text-sm text-ink-faint leading-relaxed max-w-[220px]">
-              A training operating system built on readiness, load, and adaptive programming.
+              {copy.footerBody}
             </p>
           </div>
-          {columns.map((col) => (
+          {localizedColumns.map((col) => (
             <div key={col.title}>
               <p className="label-eyebrow mb-3">{col.title}</p>
               <ul className="space-y-2">
@@ -59,8 +66,8 @@ export function Footer() {
           ))}
         </div>
         <div className="mt-12 flex flex-col gap-3 border-t border-surface-border pt-6 text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 GymAI. All rights reserved.</p>
-          <p className="font-mono">Built for the AI training era.</p>
+          <p>© 2026 GymAI. {copy.allRights}</p>
+          <p className="font-mono">{copy.footerEnd}</p>
         </div>
       </div>
     </footer>
