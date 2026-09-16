@@ -1,3 +1,5 @@
+
+//Workout page-displays workout plans and training options
 import { useEffect, useMemo, useState } from 'react'
 import { CheckCircle2, Circle, Clock3, Pause, Play, SkipForward, Camera } from 'lucide-react'
 import { motion } from 'framer-motion'
