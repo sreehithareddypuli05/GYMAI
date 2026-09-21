@@ -17,7 +17,6 @@ from app.routers import (
     progress,
     profile,
     exercises,
-    marathons,
 )
 
 
@@ -77,7 +76,6 @@ app.include_router(history.router)
 app.include_router(progress.router)
 app.include_router(profile.router)
 app.include_router(exercises.router)
-app.include_router(marathons.router)
 
 app.mount("/media", StaticFiles(directory="app/static"), name="media")
 

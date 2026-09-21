@@ -9,7 +9,6 @@ from sqlalchemy import (
     Boolean,
     JSON,
     ForeignKey,
-    UniqueConstraint,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -117,16 +116,6 @@ class User(Base):
         cascade="all, delete-orphan",
     )
 
-    marathon_reminders: Mapped[list["MarathonReminder"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
-
-    notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
-
 
 class PasswordResetCode(Base):
     __tablename__ = "password_reset_codes"
@@ -218,58 +207,6 @@ class Exercise(Base):
     pose_supported: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     pose_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
-
-
-class MarathonEvent(Base):
-    __tablename__ = "marathon_events"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    name: Mapped[str] = mapped_column(String(160), nullable=False)
-    description: Mapped[str] = mapped_column(String(1000), nullable=False)
-    location: Mapped[str] = mapped_column(String(200), nullable=False)
-    event_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
-    distance: Mapped[str] = mapped_column(String(50), nullable=False)
-    registration_deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    registration_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False, index=True)
-
-    reminders: Mapped[list["MarathonReminder"]] = relationship(
-        back_populates="marathon",
-        cascade="all, delete-orphan",
-    )
-
-
-class MarathonReminder(Base):
-    __tablename__ = "marathon_reminders"
-    __table_args__ = (
-        UniqueConstraint("user_id", "marathon_id", name="uq_marathon_reminder_user_marathon"),
-    )
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    marathon_id: Mapped[str] = mapped_column(String(36), ForeignKey("marathon_events.id", ondelete="CASCADE"), nullable=False, index=True)
-    status: Mapped[str] = mapped_column(String(32), nullable=False, default="active")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False, index=True)
-
-    user: Mapped["User"] = relationship(back_populates="marathon_reminders")
-    marathon: Mapped["MarathonEvent"] = relationship(back_populates="reminders")
-
-
-class Notification(Base):
-    __tablename__ = "notifications"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    marathon_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("marathon_events.id", ondelete="CASCADE"), nullable=True, index=True)
-    title: Mapped[str] = mapped_column(String(160), nullable=False)
-    message: Mapped[str] = mapped_column(String(500), nullable=False)
-    notification_type: Mapped[str] = mapped_column(String(60), nullable=False, default="general")
-    is_read: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False, index=True)
-
-    user: Mapped["User"] = relationship(back_populates="notifications")
-    marathon: Mapped["MarathonEvent | None"] = relationship()
 
 
 class PoseSession(Base):
