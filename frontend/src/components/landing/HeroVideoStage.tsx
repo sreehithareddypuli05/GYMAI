@@ -44,7 +44,7 @@ export function HeroVideoStage() {
         <div className="hero-video-shade" />
         <div className="hero-video-scan" />
         <div className="hero-video-label"><span>{videos[index].label}</span><b>GYMAI TRAINING</b></div>
-        <div className="hero-video-badge"><Play size={11} fill="currentColor" /><span>CINEMATIC TRAINING</span><VolumeX size={12} /></div>
+        <div className="hero-video-badge"><span>Be Strong From both Inner and Outer</span></div>
         <div className="hero-video-progress" aria-hidden="true"><i style={{ width: `${((index + 1) / videos.length) * 100}%` }} /></div>
       </div>
     </div>

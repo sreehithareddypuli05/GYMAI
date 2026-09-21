@@ -1,9 +1,10 @@
 import { NavLink, Link } from 'react-router-dom'
-import { Activity, Dumbbell, History, LayoutDashboard, Library, TimerReset, TrendingUp, User } from 'lucide-react'
+import { Activity, Dumbbell, History, LayoutDashboard, Library, TrendingUp, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserMenu } from './UserMenu'
-import { NotificationBell } from '@/components/layout/NotificationBell'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { LanguageSelector } from '@/components/ui/LanguageSelector'
+import { useLanguage } from '@/context/LanguageContext'
 
 const nav = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -11,11 +12,12 @@ const nav = [
   { to: '/exercises', label: 'Exercises', icon: Library },
   { to: '/progress', label: 'Progress', icon: TrendingUp },
   { to: '/history', label: 'History', icon: History },
-  { to: '/marathons', label: 'Marathons', icon: TimerReset },
   { to: '/profile', label: 'Profile', icon: User },
+  { to: '/equipment', label: 'Equipment', icon: Dumbbell },
 ]
 
 export function Navbar() {
+  const { t } = useLanguage()
   return (
     <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-2rem)] max-w-6xl -translate-x-1/2">
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-surface-borderStrong bg-charcoal px-3 py-2 shadow-card ">
@@ -23,7 +25,7 @@ export function Navbar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald/15 text-emerald">
             <Activity size={17} />
           </div>
-          <span className="font-display text-base font-semibold text-ink">Gym<span className="text-emerald">AI</span></span>
+          <span className="font-display text-base font-semibold text-ink">Gym<span className="text-orange">AI</span></span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -41,16 +43,12 @@ export function Navbar() {
               }
             >
               <Icon size={14} />
-              {label}
+              {t(label)}
             </NavLink>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <NotificationBell />
-          <ThemeToggle />
-          <UserMenu />
-        </div>
+        <div className="flex items-center gap-2"><LanguageSelector compact /><ThemeToggle /><UserMenu /></div>
       </div>
     </header>
   )

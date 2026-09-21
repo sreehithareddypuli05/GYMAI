@@ -67,20 +67,20 @@ export function TestimonialsSection() {
                       ? {
                           x: 230,
                           scale: 0.78,
-                          opacity: 0.18,
+                          opacity: 0.45,
                           z: 3,
                         }
                       : offset === stories.length - 1
                       ? {
                           x: -230,
                           scale: 0.78,
-                          opacity: 0.18,
+                          opacity: 0.45,
                           z: 3,
                         }
                       : {
                           x: 0,
                           scale: 0.72,
-                          opacity: 0,
+                          opacity: 0.12,
                           z: 0,
                         }
               return (

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from '@/context/AuthContext'
 import { ToastProvider } from '@/context/ToastContext'
+import { LanguageProvider } from '@/context/LanguageContext'
 import { ProtectedRoute } from '@/routes/ProtectedRoute'
 
 import Landing from '@/pages/Landing'
@@ -13,9 +14,12 @@ import Workout from '@/pages/Workout'
 import Exercises from '@/pages/Exercises'
 import ProgressPage from '@/pages/Progress'
 import History from '@/pages/History'
-import Marathons from '@/pages/Marathons'
 import Profile from '@/pages/Profile'
 import Settings from '@/pages/Settings'
+import Equipment from '@/pages/Equipment'
+import About from '@/pages/About'
+import { MotivationNotification } from '@/components/ui/MotivationNotification'
+import { GoogleTranslateBridge } from '@/components/ui/GoogleTranslateBridge'
 import NotFound from '@/pages/NotFound'
 
 export default function App() {
@@ -23,6 +27,8 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
+          <LanguageProvider>
+          <GoogleTranslateBridge />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
@@ -36,12 +42,15 @@ export default function App() {
             <Route path="/exercises" element={<ProtectedRoute><Exercises /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-            <Route path="/marathons" element={<ProtectedRoute><Marathons /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute allowIncomplete><Profile /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/equipment" element={<Equipment />} />
+            <Route path="/about" element={<About />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <MotivationNotification />
+          </LanguageProvider>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

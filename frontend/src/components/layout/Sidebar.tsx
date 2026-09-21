@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Dumbbell, Library, TrendingUp, History, User, Settings, Activity, TimerReset } from 'lucide-react'
+import { LayoutDashboard, Dumbbell, Library, TrendingUp, History, User, Settings, Activity } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const nav = [
@@ -8,7 +8,6 @@ const nav = [
   { to: '/exercises', label: 'Exercises', icon: Library },
   { to: '/progress', label: 'Progress', icon: TrendingUp },
   { to: '/history', label: 'History', icon: History },
-  { to: '/marathons', label: 'Marathons', icon: TimerReset },
   { to: '/profile', label: 'Profile', icon: User },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]

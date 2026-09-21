@@ -60,7 +60,12 @@ const mapExercise = (x: WorkoutExerciseApi): Exercise => ({
   sets: x.sets,
   reps: x.reps,
   restSeconds: x.rest_seconds,
-  description: x.description,
+  // Normalize the seeded exercise description for clean client-facing copy.
+  // This keeps the backend/database untouched.
+  description: x.description
+    .replace(/\ba advanced\b/gi, 'an advanced')
+    .replace(/\ban intermediate\b/gi, 'an intermediate')
+    .replace(/\ba beginner\b/gi, 'a beginner'),
   cues: x.cues,
   commonMistakes: x.common_mistakes,
   goalTags: x.goal_tags,
