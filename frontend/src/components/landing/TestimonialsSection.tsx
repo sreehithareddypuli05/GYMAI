@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Quote } from 'lucide-react'
 
 const stories = [
@@ -15,31 +15,165 @@ const stories = [
 
 export function TestimonialsSection() {
   const [index, setIndex] = useState(0)
-  const story = stories[index]
-  const go = (dir: number) => setIndex((index + dir + stories.length) % stories.length)
+
+  const go = (dir: number) =>
+    setIndex((index + dir + stories.length) % stories.length)
 
   return (
-    <section id="testimonials" className="testimonials-section relative overflow-hidden border-t border-white/10 py-24 sm:py-32">
+    <section
+      id="testimonials"
+      className="testimonials-section relative overflow-hidden border-t border-white/10 py-24 sm:py-32"
+    >
       <div className="container-shell">
-        <div className="testimonial-heading"><div><p className="label-eyebrow">Athlete stories</p><h2 className="cinematic-heading mt-5">REAL WORK.<br /><span>REAL PROGRESS.</span></h2></div><p>See how different training goals become easier to follow when every session has a clear purpose, useful feedback and visible momentum.</p></div>
+
+        <div className="testimonial-heading">
+          <div>
+            <p className="label-eyebrow">Athlete stories</p>
+
+            <h2 className="cinematic-heading mt-5">
+              REAL WORK.
+              <br />
+              <span>REAL PROGRESS.</span>
+            </h2>
+          </div>
+
+          <p>
+            See how different training goals become easier to follow when
+            every session has a clear purpose, useful feedback and visible
+            momentum.
+          </p>
+        </div>
 
         <div className="testimonial-stage">
+
           <div className="testimonial-orb" />
+
           <div className="testimonial-card-stack">
+
             {stories.map((s, i) => {
-              const offset = (i - index + stories.length) % stories.length
-              const visual = offset === 0 ? { x: 0, scale: 1, opacity: 1, z: 5 } : offset === 1 ? { x: 185, scale: .88, opacity: .34, z: 3 } : offset === stories.length - 1 ? { x: -185, scale: .88, opacity: .34, z: 3 } : { x: 0, scale: .72, opacity: 0, z: 0 }
+
+              const offset =
+                (i - index + stories.length) % stories.length
+
+               const visual =
+                    offset === 0
+                      ? {
+                          x: 0,
+                          scale: 1,
+                          opacity: 1,
+                          z: 5,
+                        }
+                      : offset === 1
+                      ? {
+                          x: 230,
+                          scale: 0.78,
+                          opacity: 0.45,
+                          z: 3,
+                        }
+                      : offset === stories.length - 1
+                      ? {
+                          x: -230,
+                          scale: 0.78,
+                          opacity: 0.45,
+                          z: 3,
+                        }
+                      : {
+                          x: 0,
+                          scale: 0.72,
+                          opacity: 0.12,
+                          z: 0,
+                        }
               return (
-                <motion.article key={s.name} className="testimonial-card" animate={visual} transition={{ duration: .6, ease: [0.16, 1, 0.3, 1] }}>
-                  <div className="testimonial-image"><img src={s.image} alt={`GymAI athlete ${s.name}`} /><div /></div>
-                  <div className="testimonial-content"><Quote size={18} className="text-orange" /><p>“{s.quote}”</p><div className="testimonial-person"><div><b>{s.name}</b><span>{s.role}</span></div><div className="testimonial-stat"><b>{s.stat}</b><span>{s.statLabel}</span></div></div></div>
+                <motion.article
+                  key={s.name}
+                  className="testimonial-card"
+                  animate={visual}
+                  transition={{
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+
+                  {/* IMAGE - remains visible on every card */}
+                  <div className="testimonial-image">
+                    <img
+                      src={s.image}
+                      alt={`GymAI athlete ${s.name}`}
+                    />
+                    <div />
+                  </div>
+
+                  {/* 
+                    ONLY THE CENTER CARD SHOWS THIS CONTENT.
+                    Side cards keep their images but their text is hidden.
+                  */}
+                  <div
+                    className="testimonial-content"
+                    style={{
+                      opacity: i === index ? 1 : 0,
+                      visibility:
+                        i === index ? 'visible' : 'hidden',
+                      pointerEvents:
+                        i === index ? 'auto' : 'none',
+                    }}
+                  >
+                    <Quote
+                      size={18}
+                      className="text-orange"
+                    />
+
+                    <p>
+                      “{s.quote}”
+                    </p>
+
+                    <div className="testimonial-person">
+
+                      <div>
+                        <b>{s.name}</b>
+                        <span>{s.role}</span>
+                      </div>
+
+                      <div className="testimonial-stat">
+                        <b>{s.stat}</b>
+                        <span>{s.statLabel}</span>
+                      </div>
+
+                    </div>
+                  </div>
+
                 </motion.article>
               )
             })}
+
           </div>
-          <button className="carousel-arrow carousel-left" onClick={() => go(-1)} aria-label="Previous testimonial"><ArrowLeft size={18} /></button>
-          <button className="carousel-arrow carousel-right" onClick={() => go(1)} aria-label="Next testimonial"><ArrowRight size={18} /></button>
-          <div className="carousel-dots">{stories.map((s, i) => <button key={s.name} aria-label={`Show testimonial ${i + 1}`} className={i === index ? 'active' : ''} onClick={() => setIndex(i)} />)}</div>
+
+          <button
+            className="carousel-arrow carousel-left"
+            onClick={() => go(-1)}
+            aria-label="Previous testimonial"
+          >
+            <ArrowLeft size={18} />
+          </button>
+
+          <button
+            className="carousel-arrow carousel-right"
+            onClick={() => go(1)}
+            aria-label="Next testimonial"
+          >
+            <ArrowRight size={18} />
+          </button>
+
+          <div className="carousel-dots">
+            {stories.map((s, i) => (
+              <button
+                key={s.name}
+                aria-label={`Show testimonial ${i + 1}`}
+                className={i === index ? 'active' : ''}
+                onClick={() => setIndex(i)}
+              />
+            ))}
+          </div>
+
         </div>
       </div>
     </section>

@@ -77,6 +77,7 @@ export interface Exercise {
   goalTags: string[]
   imageUrl: string
   imageUrls?: string[]
+  videoUrl?: string | null
   poseSupported: boolean
   poseType?: string | null
 }
@@ -110,6 +111,7 @@ export interface HistoryEntry {
   durationMinutes: number
   exerciseCount: number
   completion: number
+  calories?: number
   focus?: string | null
   totalSets?: number
   completedSets?: number

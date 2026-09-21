@@ -75,6 +75,32 @@ export default function Dashboard() {
 
         <DashboardWorkout workout={todayWorkout} />
 
+        <section className="streak-board">
+          <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="streak-fire flex h-14 w-14 items-center justify-center rounded-full bg-orange/10 text-orange"><Flame size={30} fill="currentColor" /></div>
+              <div><p className="label-eyebrow">Consistency</p><h2 className="mt-1 font-display text-2xl font-bold text-ink">{dashboard.current_streak} day streak</h2><p className="mt-1 text-xs text-ink-muted">{dashboard.current_streak ? 'Keep today’s training habit alive.' : 'Complete today’s workout to start your streak.'}</p></div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="border border-surface-border/10 bg-surface/60 px-4 py-3"><p className="text-[10px] uppercase tracking-wider text-ink-faint">Current</p><p className="mt-1 font-mono text-xl font-bold text-orange">{dashboard.current_streak}</p></div>
+              <div className="border border-surface-border/10 bg-surface/60 px-4 py-3"><p className="text-[10px] uppercase tracking-wider text-ink-faint">Longest</p><p className="mt-1 font-mono text-xl font-bold text-ink">{dashboard.longest_streak}</p></div>
+              <div className="hidden border border-surface-border/10 bg-surface/60 px-4 py-3 sm:block"><p className="text-[10px] uppercase tracking-wider text-ink-faint">This week</p><p className="mt-1 font-mono text-xl font-bold text-ink">{dashboard.workouts_this_week}/7</p></div>
+            </div>
+          </div>
+          <div className="relative z-10 mt-5">
+            <div className="mb-2 flex justify-between text-[10px] uppercase tracking-wider text-ink-faint"><span>Weekly training</span><span>{dashboard.workouts_this_week} completed</span></div>
+            <div className="streak-days">
+              {dashboard.activity.map((day, index) => {
+                const today = new Date().getDay()
+                const mondayIndex = today === 0 ? 6 : today - 1
+                const isToday = index === mondayIndex
+                const done = day.sessions > 0
+                return <div key={day.label} className={`streak-day ${done ? 'done' : ''} ${isToday ? 'today' : ''}`}><p className="text-[10px] font-semibold text-ink-muted">{day.label}</p><div className="mx-auto my-2 flex h-6 w-6 items-center justify-center rounded-full">{done ? <Flame size={15} className="text-orange" fill="currentColor" /> : <span className="h-1.5 w-1.5 rounded-full bg-ink-faint/50" />}</div><p className={`text-[9px] ${isToday ? 'text-orange' : 'text-ink-faint'}`}>{isToday ? 'Today' : done ? 'Done' : 'Rest'}</p></div>
+              })}
+            </div>
+          </div>
+        </section>
+
         <section>
           <div className="mb-4 flex items-end justify-between"><div><p className="label-eyebrow">Training pulse</p><h2 className="mt-2 font-display text-2xl font-semibold text-ink">Your numbers</h2></div><span className="text-xs text-ink-faint">Updated from your saved sessions</span></div>
           <div className="grid grid-cols-1 divide-y divide-surface-border border-y border-surface-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 xl:grid-cols-4">

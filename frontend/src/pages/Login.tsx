@@ -59,6 +59,9 @@ export default function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <div className="-mt-1 flex justify-end">
+          <Link to="/forgot-password" className="text-xs font-medium text-orange hover:text-orange-light">Forgot password?</Link>
+        </div>
 
         {error && (
           <p role="alert" className="rounded-lg border border-danger/25 bg-danger/10 px-3.5 py-2.5 text-sm text-danger">

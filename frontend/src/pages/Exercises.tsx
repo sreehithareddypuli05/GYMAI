@@ -4,6 +4,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { ExerciseCard } from '@/components/gymai/ExerciseCard'
 import { ExerciseModal } from '@/components/gymai/ExerciseModal'
+import { useLanguage } from '@/context/LanguageContext'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { getExercises } from '@/services/exerciseService'
 import type { Difficulty, Equipment, Exercise, MuscleGroup } from '@/types'
@@ -40,6 +41,7 @@ export default function Exercises() {
   const [results, setResults] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Exercise | null>(null)
+  const { t } = useLanguage()
 
   useEffect(() => {
     setLoading(true)
@@ -54,7 +56,7 @@ export default function Exercises() {
 
   return (
     <AppShell>
-      <PageHeader eyebrow="60+ movements" title="Exercise Library" description="Explore guided exercises across beginner, intermediate and advanced training." />
+      <PageHeader eyebrow="60+ movements" title={t('Exercise Library')} description="Explore exercises by muscle group, equipment and difficulty with level-based video demonstrations." />
 
       <div className="card-surface p-5 mb-6 space-y-4">
         <div className="relative">
@@ -62,7 +64,7 @@ export default function Exercises() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search exercises…"
+            placeholder={`${t('Exercises')}…`}
             className="w-full rounded-xl border border-surface-borderStrong bg-surface pl-10 pr-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-emerald focus:outline-none focus:ring-1 focus:ring-emerald/40"
           />
         </div>
@@ -82,7 +84,7 @@ export default function Exercises() {
         </div>
       </div>
 
-      {!loading && results.length > 0 && <div className="mb-4 flex items-center justify-between text-xs text-ink-faint"><span>{results.length} exercises available</span><span>Every movement includes visual guidance</span></div>}
+      {!loading && results.length > 0 && <div className="mb-4 flex items-center justify-between text-xs text-ink-faint"><span>{results.length} exercises available</span><span>Level-based video guidance available</span></div>}
 
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

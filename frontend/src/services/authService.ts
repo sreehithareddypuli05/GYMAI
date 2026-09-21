@@ -16,13 +16,13 @@ export interface AuthResponse {
 export interface ProfileUpdateData {
   full_name?: string
   avatar_url?: string | null
-  fitness_level?: FitnessLevel
-  goal?: Goal
-  training_frequency?: number
-  equipment?: Equipment[]
-  age?: number
-  height_cm?: number
-  weight_kg?: number
+  fitness_level?: FitnessLevel | null
+  goal?: Goal | null
+  training_frequency?: number | null
+  equipment?: Equipment[] | null
+  age?: number | null
+  height_cm?: number | null
+  weight_kg?: number | null
   profile_completed?: boolean
 }
 
@@ -97,4 +97,29 @@ export async function changePassword(
 
 export async function logoutUser(): Promise<void> {
   await api.post('/auth/logout')
+}
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  await api.post('/auth/forgot-password', { email })
+}
+
+export async function verifyPasswordResetCode(
+  email: string,
+  code: string,
+): Promise<void> {
+  await api.post('/auth/verify-reset-code', { email, code })
+}
+
+export async function resetPasswordWithCode(
+  email: string,
+  code: string,
+  newPassword: string,
+  confirmPassword: string,
+): Promise<void> {
+  await api.post('/auth/reset-password', {
+    email,
+    code,
+    new_password: newPassword,
+    confirm_password: confirmPassword,
+  })
 }

@@ -75,8 +75,12 @@ export default function Landing() {
       </section>
       <section id="ai-form" className="form-section border-t border-white/10 py-20 sm:py-28">
         <div className="container-shell grid items-center gap-10 lg:grid-cols-2">
-          <div><p className="label-eyebrow mb-3">Movement feedback</p><h2 className="cinematic-heading text-4xl sm:text-5xl">TRAIN WITH<br /><span>BETTER FORM.</span></h2><p className="mt-5 max-w-xl leading-7 text-ink-muted">For supported exercises, GymAI uses camera-based movement tracking to help count repetitions and surface simple technique cues while you train.</p><div className="mt-7 flex flex-wrap gap-2">{['Squat','Push-up','Lunge','Bicep curl','Shoulder press'].map(x => <span key={x} className="orange-tag">{x}</span>)}</div></div>
-          <div className="posture-panel"><img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?auto=format&fit=crop&w=1200&q=88" alt="Athlete performing a gym exercise" loading="lazy" /><div className="posture-overlay"><span>AI FORM ANALYSIS</span><b>92%</b><i /></div></div>
+          <div><p className="label-eyebrow mb-3">Movement feedback</p><h2 className="cinematic-heading text-4xl sm:text-5xl">TRAIN WITH<br /><span>BETTER FORM.</span></h2><p className="mt-5 max-w-xl leading-7 text-ink-muted">Your goals don’t care how you feel; they only require you to show up.
+Every rep you finish is a promise kept to your future self, building a body that matches your ambition.
+Stop waiting for the perfect moment or the right mood to strike—action beats intention every single time.
+The discomfort you accept today will seamlessly transform into the undeniable strength you display tomorrow.
+Step through our doors, leave your excuses at the baseline, and let your daily hustle do all the talking.</p><div className="mt-7 flex flex-wrap gap-2">{['Squat','Push-up','Lunge','Bicep curl','Shoulder press'].map(x => <span key={x} className="orange-tag">{x}</span>)}</div></div>
+          <div className="posture-panel"><img src="https://img.freepik.com/premium-photo/cropped-photo-strong-athlrtic-man-taking-dumbbells-from-floor-work-out-modern-gym-warm-orange-light_116317-20357.jpg" alt="Athlete performing a gym exercise" loading="lazy" /><div className="posture-overlay"><span>AI FORM ANALYSIS</span><b>92%</b><i /></div></div>
         </div>
       </section>
       <CTASection />
