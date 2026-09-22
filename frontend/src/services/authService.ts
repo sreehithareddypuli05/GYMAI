@@ -24,6 +24,7 @@ export interface ProfileUpdateData {
   height_cm?: number | null
   weight_kg?: number | null
   profile_completed?: boolean
+  working_days?: string[] | null
 }
 
 export interface ChangePasswordData {

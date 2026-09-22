@@ -51,7 +51,8 @@ const frequencies = [
   { value: 5, title: '5+ days', description: 'A frequent training routine.' },
 ]
 
-const totalSteps = 7
+const totalSteps = 8
+const WEEKDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
 export default function Onboarding() {
   const { user, updateUser } = useAuth()
@@ -68,6 +69,7 @@ export default function Onboarding() {
     user?.equipment?.length ? user.equipment : [],
   )
   const [frequency, setFrequency] = useState<number | null>(user?.training_frequency ?? null)
+  const [workingDays, setWorkingDays] = useState<string[]>(user?.working_days ?? [])
   const [saving, setSaving] = useState(false)
 
   const stepValid = useMemo(() => {
@@ -77,7 +79,8 @@ export default function Onboarding() {
     if (step === 4) return Boolean(goal)
     if (step === 5) return Boolean(level)
     if (step === 6) return equipment.length > 0
-    return Boolean(frequency)
+    if (step === 7) return Boolean(frequency)
+    return workingDays.length > 0
   }, [step, age, weight, height, goal, level, equipment, frequency])
 
   const selectEquipment = (value: Equipment) => {
@@ -106,7 +109,7 @@ export default function Onboarding() {
   }
 
   const finish = async () => {
-    if (!stepValid || !goal || !level || !frequency || !equipment.length) return
+    if (!stepValid || !goal || !level || !frequency || !equipment.length || !workingDays.length) return
 
     setSaving(true)
     try {
@@ -118,6 +121,7 @@ export default function Onboarding() {
         fitness_level: level,
         equipment,
         training_frequency: frequency,
+        working_days: workingDays,
       }
 
       const updated = await updateProfile(payload)
@@ -129,6 +133,7 @@ export default function Onboarding() {
         fitness_level: updated.fitness_level ?? undefined,
         equipment: updated.equipment ?? undefined,
         training_frequency: updated.training_frequency ?? undefined,
+        working_days: updated.working_days ?? undefined,
         profile_completed: updated.profile_completed,
       })
 
@@ -150,6 +155,7 @@ export default function Onboarding() {
     'What is your training experience?',
     'What equipment do you have access to?',
     'How often do you want to train?',
+    'Which days will you train?',
   ][step - 1]
 
   const subtitle = [
@@ -160,6 +166,7 @@ export default function Onboarding() {
     'This determines the difficulty of your training plan.',
     'No equipment is completely fine — GymAI can build bodyweight workouts.',
     'Choose a routine you can realistically maintain.',
+    'Pick the days of the week you plan to train.',
   ][step - 1]
 
   return (
@@ -316,6 +323,23 @@ export default function Onboarding() {
                       </div>
                     </SelectionCard>
                   ))}
+                </div>
+              )}
+              {step === 8 && (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {WEEKDAYS.map((d) => {
+                    const selected = workingDays.includes(d)
+                    return (
+                      <SelectionCard key={d} selected={selected} onClick={() => {
+                        setWorkingDays((cur) => cur.includes(d) ? cur.filter(x => x !== d) : [...cur, d])
+                      }}>
+                        <div>
+                          <p className="font-semibold text-ink">{d}</p>
+                        </div>
+                        {selected && <Check className="ml-auto text-emerald" size={18} />}
+                      </SelectionCard>
+                    )
+                  })}
                 </div>
               )}
             </motion.div>

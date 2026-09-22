@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     smtp_use_tls: bool = True
     password_reset_expire_minutes: int = 10
     password_reset_resend_seconds: int = 60
+    # Reminder worker interval in seconds (used by simple in-process worker)
+    reminder_interval_seconds: int = 60
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

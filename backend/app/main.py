@@ -86,3 +86,122 @@ def health_check():
         "status": "ok",
         "service": "GymAI API",
     }
+
+
+# Simple in-process reminder worker. Minimal and safe for single-process
+# development setups. It periodically scans users and sends reminders.
+def _run_reminder_loop():
+    import time
+    from datetime import datetime, timezone, timedelta
+    from app.database import SessionLocal
+    from app.services import email as email_service
+    from app.services.monitor import find_incomplete_workouts, check_missed_working_day
+
+    interval = max(10, settings.reminder_interval_seconds)
+
+    while True:
+        with SessionLocal() as db:
+            try:
+                users = db.query(models.User).all()
+                now = datetime.now(timezone.utc)
+                yesterday = (now - timedelta(days=1)).date()
+
+                for user in users:
+                    # Skip users without email
+                    if not getattr(user, 'email', None):
+                        continue
+
+                    # Incomplete workouts: send one reminder per session only once
+                    try:
+                        incomplete = find_incomplete_workouts(db, user)
+                        for item in incomplete:
+                            # check if we've already recorded a reminder
+                            exists = db.query(models.ReminderSent).filter_by(user_id=user.id, type='incomplete', ref_id=item.session_id).first()
+                            if exists:
+                                continue
+                            try:
+                                db.add(models.ReminderSent(user_id=user.id, type='incomplete', ref_id=item.session_id))
+                                db.commit()
+                                email_service.send_incomplete_workout_reminder(user.email, item)
+                            except Exception:
+                                db.rollback()
+                                continue
+                    except Exception:
+                        # protect per-user loop
+                        continue
+
+                    # Missed working day: check for yesterday
+                    try:
+                        missed = check_missed_working_day(db, user, yesterday, now=now)
+                        if missed.missed:
+                            ref = f"missed-{yesterday.isoformat()}"
+                            exists = db.query(models.ReminderSent).filter_by(user_id=user.id, type='missed', ref_id=ref).first()
+                            if exists:
+                                continue
+                            try:
+                                db.add(models.ReminderSent(user_id=user.id, type='missed', ref_id=ref))
+                                db.commit()
+                                email_service.send_missed_working_day_reminder(user.email, missed)
+                            except Exception:
+                                db.rollback()
+                                continue
+                    except Exception:
+                        continue
+            except Exception:
+                # keep the loop alive on unexpected errors
+                pass
+
+        # use event.wait so shutdown can interrupt sleep
+        stop_event = globals().get("_reminder_stop_event")
+        if stop_event is not None:
+            stop_event.wait(interval)
+            if stop_event.is_set():
+                break
+        else:
+            import time
+            time.sleep(interval)
+
+
+# Reminder thread handles (initialized on startup)
+_reminder_thread = None
+_reminder_stop_event = None
+
+
+def _start_reminder_worker():
+    import threading
+
+    global _reminder_thread, _reminder_stop_event
+
+    # Only start if SMTP is configured
+    if not (settings.smtp_host and settings.smtp_user and settings.smtp_password):
+        return
+
+    if _reminder_thread and _reminder_thread.is_alive():
+        return
+
+    _reminder_stop_event = threading.Event()
+    _reminder_thread = threading.Thread(target=_run_reminder_loop, daemon=True)
+    _reminder_thread.start()
+
+
+def _stop_reminder_worker(timeout: float = 5.0):
+    global _reminder_thread, _reminder_stop_event
+    if not _reminder_thread:
+        return
+    try:
+        if _reminder_stop_event:
+            _reminder_stop_event.set()
+        _reminder_thread.join(timeout)
+    finally:
+        _reminder_thread = None
+        _reminder_stop_event = None
+
+
+@app.on_event("startup")
+def _on_startup():
+    _start_reminder_worker()
+
+
+@app.on_event("shutdown")
+def _on_shutdown():
+    _stop_reminder_worker()

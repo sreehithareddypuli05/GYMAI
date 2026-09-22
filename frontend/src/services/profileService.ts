@@ -9,6 +9,7 @@ export interface ProfilePayload {
   fitness_level: FitnessLevel
   equipment: Equipment[]
   training_frequency: number
+  working_days?: string[]
 }
 
 export interface ProfileCompletion {

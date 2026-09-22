@@ -10,6 +10,8 @@ import { useToast } from '@/context/ToastContext'
 import { updateProfile } from '@/services/profileService'
 import type { Equipment, FitnessLevel, Goal } from '@/types'
 
+const WEEKDAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+
 const goals: Goal[] = ['Build Muscle', 'Lose Fat', 'Gain Strength', 'Improve Endurance', 'General Fitness']
 const levels: FitnessLevel[] = ['Beginner', 'Intermediate', 'Advanced']
 const equipmentOptions: Equipment[] = ['None', 'Dumbbell', 'Barbell', 'Machine', 'Full Gym', 'Cable', 'Kettlebell', 'Bands']
@@ -46,6 +48,7 @@ export default function Profile() {
   const [level, setLevel] = useState<FitnessLevel | null>(user?.fitness_level ?? null)
   const [equipment, setEquipment] = useState<Equipment[]>(user?.equipment ?? [])
   const [frequency, setFrequency] = useState<number | null>(user?.training_frequency ?? null)
+  const [workingDays, setWorkingDays] = useState<string[]>(user?.working_days ?? [])
 
   useEffect(() => {
     if (!user) return
@@ -58,10 +61,10 @@ export default function Profile() {
     setLevel(user.fitness_level ?? null)
     setEquipment(user.equipment ?? [])
     setFrequency(user.training_frequency ?? null)
+    setWorkingDays(user.working_days ?? [])
   }, [user])
-
-  const fields = [fullName.trim().length > 1, age, height, weight, goal, level, equipment.length > 0, frequency]
-  const completion = useMemo(() => Math.round((fields.filter(Boolean).length / fields.length) * 100), [fullName, age, height, weight, goal, level, equipment, frequency])
+  const fields = [fullName.trim().length > 1, age, height, weight, goal, level, equipment.length > 0, frequency, workingDays.length > 0]
+  const completion = useMemo(() => Math.round((fields.filter(Boolean).length / fields.length) * 100), [fullName, age, height, weight, goal, level, equipment, frequency, workingDays])
   const equipmentCompatible = level === 'Beginner' ? equipment.length > 0 : equipment.length > 0 && !equipment.includes('None')
   const valid = fields.every(Boolean) && Number(age) >= 13 && Number(height) >= 50 && Number(weight) >= 20 && equipmentCompatible
 
@@ -75,6 +78,7 @@ export default function Profile() {
     { key: 'level', title: 'What is your training experience?', subtitle: 'Be honest — GymAI will adapt the starting point.', icon: <Gauge size={20} /> },
     { key: 'equipment', title: 'What equipment do you have?', subtitle: 'Select everything available to you. No equipment is valid too.', icon: <Dumbbell size={20} /> },
     { key: 'frequency', title: 'How often can you train?', subtitle: 'Choose the number of days you can realistically maintain.', icon: <Timer size={20} /> },
+    { key: 'working_days', title: 'Which days will you train?', subtitle: 'Select the days of the week you plan to train.', icon: <Timer size={20} /> },
   ]
 
   const stepValid = [
@@ -87,6 +91,7 @@ export default function Profile() {
     Boolean(level),
     equipmentCompatible,
     Boolean(frequency),
+    workingDays.length > 0,
   ][step]
 
   const selectEquipment = (item: Equipment) => {
@@ -123,7 +128,7 @@ export default function Profile() {
   }
 
   const save = async () => {
-    if (!user || !valid || !goal || !level || !frequency || !equipmentCompatible) {
+    if (!user || !valid || !goal || !level || !frequency || !equipmentCompatible || workingDays.length === 0) {
       showToast('Please complete every question first.', 'error'); return
     }
     setSaving(true)
@@ -131,12 +136,14 @@ export default function Profile() {
       const response = await updateProfile({
         age: Number(age), height_cm: Number(height), weight_kg: Number(weight),
         goal, fitness_level: level, equipment, training_frequency: frequency,
+        working_days: workingDays,
       })
       const updated = await updateUser({
         full_name: fullName.trim(), avatar_url: avatarUrl,
         age: response.age ?? undefined, height_cm: response.height_cm ?? undefined, weight_kg: response.weight_kg ?? undefined,
         goal: response.goal ?? undefined, fitness_level: response.fitness_level ?? undefined,
         equipment: response.equipment ?? undefined, training_frequency: response.training_frequency ?? undefined,
+        working_days: response.working_days ?? undefined,
         profile_completed: response.profile_completed,
       })
       setFullName(updated.full_name)
@@ -184,6 +191,7 @@ export default function Profile() {
                 <InfoCard icon={<Ruler size={17} />} label="Height" value={height ? `${height} cm` : 'Not set'} />
                 <InfoCard icon={<Timer size={17} />} label="Frequency" value={frequency ? `${frequency} days/week` : 'Not set'} />
                 <InfoCard icon={<Dumbbell size={17} />} label="Equipment" value={equipment.length ? equipment.map(item => item === 'None' ? 'No equipment' : item).join(', ') : 'Not set'} />
+                <InfoCard icon={<Timer size={17} />} label="Working days" value={workingDays.length ? workingDays.join(', ') : 'Not set'} />
               </div>
             </div>
           ) : (
@@ -221,6 +229,18 @@ export default function Profile() {
                   {step === 6 && <ChoiceGrid items={levels} selected={level} onSelect={setLevel} />}
                   {step === 7 && <div><div className="grid gap-3 sm:grid-cols-2">{equipmentOptions.map(item => <Choice key={item} selected={equipment.includes(item)} onClick={() => selectEquipment(item)}>{item === 'None' ? 'No Equipment' : item}</Choice>)}</div>{level && level !== 'Beginner' && <p className="mt-3 text-xs text-ink-faint">Intermediate and Advanced plans require at least one equipment option.</p>}</div>}
                   {step === 8 && <ChoiceGrid items={frequencyOptions.map(item => item.label)} selected={frequencyOptions.find(item => item.value === frequency)?.label ?? null} onSelect={label => setFrequency(frequencyOptions.find(item => item.label === label)?.value ?? null)} />}
+                  {step === 9 && (
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {WEEKDAYS.map(d => {
+                        const selected = workingDays.includes(d)
+                        return (
+                          <Choice key={d} selected={selected} onClick={() => setWorkingDays(curr => curr.includes(d) ? curr.filter(x => x !== d) : [...curr, d])}>
+                            {d}
+                          </Choice>
+                        )
+                      })}
+                    </div>
+                  )}
                 </motion.div>
               </AnimatePresence>
 

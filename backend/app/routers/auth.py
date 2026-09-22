@@ -57,6 +57,7 @@ def serialize_user(
         goal=user.goal,
         training_frequency=user.training_frequency,
         equipment=equipment,
+        working_days=user.working_days if isinstance(user.working_days, list) else None,
         age=user.age,
         height_cm=user.height_cm,
         weight_kg=user.weight_kg,

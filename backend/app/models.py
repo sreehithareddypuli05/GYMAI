@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     JSON,
     ForeignKey,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -74,6 +75,12 @@ class User(Base):
     )
 
     equipment: Mapped[list | None] = mapped_column(
+        JSON,
+        nullable=True,
+    )
+
+    # User selected working/training days (e.g. ["Monday", "Tuesday"])
+    working_days: Mapped[list | None] = mapped_column(
         JSON,
         nullable=True,
     )
@@ -221,3 +228,16 @@ class PoseSession(Base):
     form_score: Mapped[float] = mapped_column(Float, nullable=False, default=0)
     feedback: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False, index=True)
+
+
+class ReminderSent(Base):
+    __tablename__ = "reminder_sent"
+    __table_args__ = (
+        UniqueConstraint('user_id', 'type', 'ref_id', name='uix_user_type_ref'),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    type: Mapped[str] = mapped_column(String(32), nullable=False)
+    ref_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)

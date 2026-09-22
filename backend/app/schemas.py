@@ -52,6 +52,8 @@ class UserUpdate(BaseModel):
         le=7,
     )
 
+    working_days: list[str] | None = None
+
     equipment: list[str] | None = None
 
     age: int | None = Field(
@@ -87,6 +89,8 @@ class UserOut(UserBase):
     training_frequency: int | None = None
 
     equipment: list[str] | None = None
+
+    working_days: list[str] | None = None
 
     age: int | None = None
 
@@ -140,6 +144,7 @@ class ProfileUpdate(BaseModel):
     fitness_level: str | None = None
     equipment: list[str] | None = None
     training_frequency: int | None = Field(default=None, ge=1, le=7)
+    working_days: list[str] | None = None
 
 
 class ProfileCompletionOut(BaseModel):

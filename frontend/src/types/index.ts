@@ -13,6 +13,8 @@ export interface User {
 
   equipment?: Equipment[] | null
 
+  working_days?: string[] | null
+
   age?: number | null
 
   height_cm?: number | null

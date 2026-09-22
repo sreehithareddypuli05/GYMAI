@@ -17,6 +17,16 @@ PROFILE_FIELDS = (
     ("training_frequency", "training_frequency"),
 )
 
+WEEKDAYS = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+]
+
 
 def _completion(user: models.User) -> schemas.ProfileCompletionOut:
     missing = []
@@ -70,6 +80,27 @@ def update_profile(
         if "None" in equipment:
             equipment = ["None"]
         data["equipment"] = list(dict.fromkeys(equipment))
+
+    # Validate working_days if provided
+    if "working_days" in data:
+        wd = data["working_days"] or []
+        # Normalize values (strip + title case) and filter empties
+        cleaned = []
+        for item in wd:
+            if not isinstance(item, str):
+                continue
+            val = item.strip()
+            if not val:
+                continue
+            # normalize to capitalized weekday
+            val = val[0].upper() + val[1:].lower() if len(val) > 1 else val.upper()
+            if val in WEEKDAYS and val not in cleaned:
+                cleaned.append(val)
+
+        if not cleaned:
+            raise HTTPException(status_code=422, detail="Please select at least one working day.")
+
+        data["working_days"] = cleaned
 
     effective_level = data.get("fitness_level", current_user.fitness_level)
     effective_equipment = data.get("equipment", current_user.equipment) or []
