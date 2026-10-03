@@ -1,0 +1,162 @@
+# GymAI — Training Intelligence
+
+GymAI is a training operating system: readiness, load, and personalized programming
+in one place. This is the first 50% production-quality build — a complete, polished
+frontend plus a real authentication backend. AI features (workout generation, an AI
+coach, adaptive programming) are intentionally deferred to the next phase; the
+service layer is already shaped so they can be swapped in without a rewrite.
+
+## Stack
+
+**Frontend** — React + Vite + TypeScript, Tailwind CSS, React Router, Framer Motion,
+Axios, Lucide React, and a small set of custom React-Bits-style motion primitives
+(spotlight cards, magnetic buttons, animated headings, scroll reveals) re-themed to
+GymAI's Charcoal + Emerald system.
+
+**Backend** — FastAPI, SQLAlchemy, JWT auth, Pydantic, Uvicorn. SQLite by default for
+local development; the SQLAlchemy URL is Postgres-ready — swap `DATABASE_URL` and
+nothing else changes.
+
+## Brand
+
+Charcoal (`#0B0F0D`) + Emerald (`#10B981` / `#059669` / `#34D399`), Space Grotesk for
+display type, Inter for body text, JetBrains Mono for data figures.
+
+## Signature interaction
+
+The **Evasive Login Button**: while the login/register form is incomplete, the
+button gently slides away from an approaching cursor and settles back to a normal,
+stable button the moment both fields are valid. It's disabled for keyboard focus,
+touch devices, and `prefers-reduced-motion`, so it never blocks anyone from
+submitting the form.
+
+## Project structure
+
+```
+GymAI/
+├── frontend/          React + Vite + TS app
+│   └── src/
+│       ├── components/
+│       │   ├── ui/        Button, Input, PasswordInput, Badge, Modal, Tooltip,
+│       │   │               Avatar, Progress, Skeleton, Spinner
+│       │   ├── layout/     Navbar, Sidebar, MobileNav, PageHeader, Footer, UserMenu, AppShell
+│       │   ├── gymai/      WorkoutCard, ExerciseCard, ExerciseModal, StatCard,
+│       │   │               ReadinessCard, TrainingLoadCard, AIInsightCard, ProgressCard,
+│       │   │               HistoryCard, WorkoutTimer, WorkoutProgress, TrainingStatus
+│       │   ├── landing/    Hero, sections, and the motion primitives (effects.tsx)
+│       │   └── auth/       AuthLayout
+│       ├── pages/          Landing, Login, Register, Dashboard, Workout, Exercises,
+│       │                   Progress, History, Profile, Settings, NotFound
+│       ├── data/           Centralized mock data (workouts, exercises, progress, history, insights)
+│       ├── services/       authService (real API) + mock-backed services ready to swap for real APIs
+│       ├── context/        AuthContext, ToastContext
+│       └── routes/         ProtectedRoute
+└── backend/            FastAPI auth service
+    └── app/
+        ├── main.py         App entry, CORS, router mounting
+        ├── config.py       Settings from environment (.env)
+        ├── database.py     SQLAlchemy engine/session (SQLite dev, Postgres-ready)
+        ├── models.py       User model
+        ├── schemas.py      Pydantic request/response models
+        ├── security.py     Password hashing, JWT creation/verification
+        ├── deps.py         get_current_user dependency
+        └── routers/auth.py POST /register, /login, GET /me, POST /logout
+```
+
+## Running it locally
+
+### Backend
+
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env            # defaults already work for local dev
+uvicorn app.main:app --reload --port 8000
+```
+
+The API is now at `http://localhost:8000` (docs at `/docs`).
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env            # points VITE_API_URL at the backend above
+npm run dev
+```
+
+The app is now at `http://localhost:5173`. Register a new account — it's a real
+account created in the backend's SQLite database (`backend/gymai.db`).
+What's Real vs. Mock
+Authentication is real — registration, login, /me, and logout are connected to the FastAPI backend using JWT authentication and securely hashed passwords.
+User profile integration is in place — authenticated user information can be retrieved from the backend and used by the application.
+Dashboard functionality is currently mock — workouts, exercises, progress, workout history, and AI insights currently use mock data through the service layer in frontend/src/services/.
+Workout recommendation ML is not implemented yet — the exercise dataset, model training, and personalized recommendation API are planned for the next development phase.
+Gemini AI integration for workout personalization is not yet part of the live dashboard flow.
+The frontend service layer is structured so the mock implementations can later be replaced with real FastAPI endpoints without requiring major changes to the UI components.
+## Verified in this build
+
+- `npm run build` (tsc + vite build) completes with no errors.
+- Backend endpoints tested end-to-end: register, duplicate-email rejection, login,
+  wrong-password rejection, `/me` with and without a token, and logout.
+- CORS confirmed working between `localhost:5173` and `localhost:8000`.
+
+
+## Phase 1 — Profile & Fitness Onboarding
+
+The profile foundation is now backend-connected.
+
+- Real authenticated training profile API under `/api/profile`
+- Profile completion endpoint at `/api/profile/completion`
+- Age, height, weight, goal, fitness level, equipment, and training frequency
+- `No Equipment` is treated as a valid equipment selection
+- Question-by-question onboarding flow
+- Persistent profile editing
+- Dashboard access is gated until onboarding is complete
+- Profile data is stored through SQLAlchemy and returned through authenticated APIs
+- Desktop app shell uses a floating navbar instead of a permanent sidebar
+
+## Beginner AI Form Analysis
+
+GymAI uses **MediaPipe Pose Landmarker** in the browser for supported Beginner exercises. The camera stream is processed locally; only summarized reps/form metrics are sent to the FastAPI backend. Supported exercise types are squat, pushup, lunge, bicep curl, and shoulder press. Intermediate and Advanced users do not receive pose checking.
+
+The MediaPipe Tasks Vision runtime is loaded from the package CDN at runtime, so the repository does not store the WASM runtime or pose model. Camera access requires browser permission and HTTPS in production (localhost is permitted during development).
+
+
+## New production features
+
+### Forgot password / email verification
+GymAI now includes a real email-based password reset flow:
+
+1. User opens **Forgot password**.
+2. The backend checks that the email belongs to a registered GymAI account.
+3. A cryptographically random 6-digit code is emailed through SMTP.
+4. The code expires after 10 minutes and is limited to 5 incorrect attempts.
+5. The user enters the code and a new password.
+6. The password is securely hashed and updated in the database.
+
+Configure these environment variables on the deployed backend (Render/Railway/etc.):
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-16-character-google-app-password
+SMTP_FROM=GymAI <your-email@gmail.com>
+SMTP_USE_TLS=true
+PASSWORD_RESET_EXPIRE_MINUTES=10
+PASSWORD_RESET_RESEND_SECONDS=60
+```
+
+For Gmail, use a Google **App Password**, not your normal Gmail password. Do not commit `.env` or SMTP credentials to GitHub.
+
+### Profile gating
+New accounts can sign in, but dashboard, workout, exercises, progress, history and settings stay locked until the training profile is complete. The user sees a clear **Complete your profile to unlock this page** screen instead of being silently redirected.
+
+### Guided profile
+The profile is now a step-by-step experience: name → avatar/photo → age → height → weight → goal → experience → equipment → training frequency. It includes selectable avatar presets and compressed photo upload.
+
+### UI refresh
+The application UI has been moved away from heavy glassmorphism. App pages use solid surfaces, clearer borders, stronger hierarchy and lighter card usage. Blur/backdrop effects are disabled for the application shell and reusable cards.

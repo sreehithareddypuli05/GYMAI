@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLTl4sHvLKXfRwJ1xSRgH_EUZAQ5YRM6g24Ad9YIkbQA&s=10" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0B0F0D" />
+    <script>document.documentElement.classList.toggle('light', localStorage.getItem('gymai_theme') === 'light'); document.documentElement.classList.toggle('dark', localStorage.getItem('gymai_theme') !== 'light'); document.documentElement.dataset.theme = localStorage.getItem('gymai_theme') === 'light' ? 'light' : 'dark';</script>
+    <title>GymAI — Training Intelligence</title>
+    <meta name="description" content="GymAI is an AI training operating system: readiness, load, and personalized programming in one place." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
